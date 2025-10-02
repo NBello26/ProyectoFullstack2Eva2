@@ -1,0 +1,15 @@
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+  min-height: calc(100vh - 200px);
+}
+
+.footer {
+  background: #2c3e50;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  margin-top: 2rem;
+}
