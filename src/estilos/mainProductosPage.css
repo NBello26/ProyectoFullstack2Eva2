@@ -1,0 +1,25 @@
+.mainProductosOrganismo-acciones {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+}
+
+.mainProductosOrganismo-btnNuevo,
+.mainProductosOrganismo-btnVolver,
+.mainProductosOrganismo-btnCriticos {
+  background-color: #1f3a93;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.mainProductosOrganismo-btnNuevo:hover,
+.mainProductosOrganismo-btnVolver:hover,
+.mainProductosOrganismo-btnCriticos:hover {
+  background-color: #162f6c;
+}

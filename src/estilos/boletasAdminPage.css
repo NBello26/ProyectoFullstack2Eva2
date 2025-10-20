@@ -1,0 +1,57 @@
+.boletasAdminOrganismo-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.boletasAdminOrganismo-container {
+  width: 900px; /* Aumentado de 700px */
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.boletasAdminOrganismo-titulo {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.boletasAdminOrganismo-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.boletasAdminOrganismo-tabla th,
+.boletasAdminOrganismo-tabla td {
+  border: 1px solid #ccc;
+  padding: 10px; /* Aumentado de 6px */
+  font-size: 14px;
+  text-align: center;
+}
+
+.boletasAdminOrganismo-tabla th {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.boletasAdminOrganismo-btnVer {
+  padding: 6px 12px; /* Botón un poco más grande */
+  font-size: 13px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.boletasAdminOrganismo-btnVer:hover {
+  background-color: #217dbb;
+}
+
+.boletasAdminOrganismo-mensaje {
+  text-align: center;
+  margin-top: 30px;
+  font-weight: bold;
+}

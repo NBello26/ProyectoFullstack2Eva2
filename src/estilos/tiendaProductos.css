@@ -1,0 +1,108 @@
+/* 🌐 Contenedor general */
+.tienda-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr); /* 4 cards por fila */
+  gap: 25px;
+  padding: 40px 60px;
+  justify-content: center;
+  align-items: start;
+  background-color: #f8f9fa;
+  max-width: 1400px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* 🧩 Tarjeta de producto */
+.tienda-card {
+  width: 300px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.tienda-card:hover {
+  transform: translateY(-6px);
+}
+
+/* 🖼️ Imagen o placeholder */
+.tienda-card-img {
+  background-color: #f1f1f1;
+  height: 180px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+}
+
+/* 📜 Información */
+.tienda-card-info {
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.tienda-card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.tienda-card-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+.tienda-card-stock {
+  color: #7f8c8d;
+  margin-bottom: 15px;
+}
+
+/* 🔘 Botón */
+.tienda-card-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tienda-card-btn:hover {
+  background-color: #2980b9;
+}
+
+/* 🚫 Mensaje vacío */
+.tienda-vacio {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  padding: 50px;
+}
+
+/* 📱 Responsividad */
+@media (max-width: 1024px) {
+  .tienda-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards por fila en laptops */
+    padding: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .tienda-grid {
+    grid-template-columns: 1fr; /* 1 card por fila en móviles */
+    padding: 20px;
+  }
+}

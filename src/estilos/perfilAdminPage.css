@@ -1,0 +1,53 @@
+/* perfilAdminPage.css */
+
+.perfilAdminOrganismo-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 25px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.perfilAdminOrganismo-titulo {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.perfilAdminOrganismo-datos p {
+  margin: 8px 0;
+  font-size: 16px;
+  color: #444;
+}
+
+.perfilAdminOrganismo-datos strong {
+  color: #222;
+}
+
+.perfilAdminOrganismo-mensaje {
+  text-align: center;
+  margin-top: 50px;
+  color: #666;
+  font-size: 18px;
+}
+
+.perfilAdminOrganismo-btnVolver {
+  display: block;
+  margin: 25px auto 0;
+  padding: 8px 16px;
+  background-color: #1f3a93; /* azul oscuro */
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.perfilAdminOrganismo-btnVolver:hover {
+  background-color: #162f6c; /* tono más oscuro al pasar el mouse */
+}

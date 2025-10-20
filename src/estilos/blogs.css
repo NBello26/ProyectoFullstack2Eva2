@@ -1,0 +1,79 @@
+
+/*Básico para el cuerpo*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f4f9;
+}
+
+/* ------------------ */
+/* Título principal */
+
+/* Contenedor de noticias, casos, etc */
+.blog-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 0 1rem 3rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* Card de cada noticia */
+.blog-card {
+    display: flex;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.blog-card:hover {
+    transform: scale(1.02);
+}
+
+/* Info texto */
+.blog-info {
+    flex: 1;
+    padding: 1.5rem;
+}
+
+.blog-info h2 {
+    margin-top: 0;
+    font-size: 1.4rem;
+    color: #111;
+}
+
+.blog-info p {
+    margin: 1rem 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #444;
+}
+
+.blog-info button {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 8px;
+    background: #ff6a00;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.blog-info button:hover {
+    background: #e65c00;
+}
+
+/* Imagen simulada */
+.blog-img {
+    flex: 1;
+    background: #ccc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}

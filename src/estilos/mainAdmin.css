@@ -1,0 +1,64 @@
+.mainAdminContainer {
+  display: flex;
+  flex-wrap: wrap;          /* Permite que las cards pasen a la siguiente fila */
+  gap: 25px;                /* Espacio entre cards */
+  justify-content: flex-start;
+  padding: 30px;
+}
+
+.mainAdminCard {
+  flex: 1 1 250px;          /* flex-grow:1, flex-shrink:1, base width 250px */
+  max-width: 300px;         /* Limita ancho máximo de cada card */
+  min-width: 220px;         /* Evita que se achiquen demasiado */
+}
+
+.cardAdmin {
+  background-color: #ffffff;
+  padding: 30px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.cardAdmin:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+.cardAdmin h2 {
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  color: #2c3e50;
+}
+
+.cardAdmin a {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.cardAdmin a:hover {
+  background-color: #217dbb;
+}
+
+/* Media queries para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .mainAdminCard {
+    flex: 1 1 45%;          /* Dos por fila en tablet */
+    max-width: 48%;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainAdminCard {
+    flex: 1 1 100%;         /* Una por fila en móviles */
+    max-width: 100%;
+  }
+}

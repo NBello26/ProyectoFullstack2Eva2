@@ -1,0 +1,92 @@
+.header-logged {
+    background-color: #004b8d;
+    color: #fff;
+    padding: 15px 0; /* un poco más alto para centrar logout */
+    position: sticky;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.header-logged-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-logged-left {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.site-name-logged {
+    font-size: 1.6rem;
+    font-weight: bold;
+}
+
+.nav-list-logged {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-list-logged li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-list-logged li a:hover {
+    color: #3498db;
+}
+
+.header-logged-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-right-logged {
+  display: flex;
+  align-items: center; /* asegura que todo esté alineado verticalmente */
+  gap: 15px; /* espacio entre carrito y logout */
+}
+
+.cart-logged {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 1rem;
+}
+
+.cart-emoji {
+  font-size: 1.2rem;
+}
+
+.cart-count {
+  font-weight: bold;
+}
+
+.logout-btn-logged {
+    padding: 12px 12px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    align-self: center; /* fuerza a que se alinee con el carrito */
+}
+
+.logout-btn-logged:hover {
+    background-color: #c0392b;
+}

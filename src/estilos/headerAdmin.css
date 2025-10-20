@@ -1,0 +1,32 @@
+/* Header específico para Admin */
+.admin-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 1em;
+  width: 100%;
+  position: relative; /* o fixed si quieres que quede pegado al top */
+  top: 0;
+  left: 0;
+
+  display: flex;
+  justify-content: space-between; /* separa Titulo y botón */
+  align-items: center;
+  text-align: left; /* quitar center para que no afecte otros headers */
+}
+
+.admin-header .admin-logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+
+  width: auto; /* asegura que no se estire */
+}
+
+.admin-header .admin-logout-btn:hover {
+  background-color: #c0392b;
+}

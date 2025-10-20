@@ -1,0 +1,102 @@
+.checkoutOrganismo-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-family: Arial, sans-serif;
+}
+
+.checkoutOrganismo-carrito, 
+.checkoutOrganismo-info {
+  margin-bottom: 30px;
+}
+
+.checkoutOrganismo-title {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.checkoutOrganismo-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.checkoutOrganismo-table th, 
+.checkoutOrganismo-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.checkoutOrganismo-inputRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.checkoutOrganismo-inputRow label {
+  flex-basis: 100px;
+}
+
+.checkoutOrganismo-inputRow input, 
+.checkoutOrganismo-inputRow textarea, 
+.checkoutOrganismo-inputRow select {
+  flex: 1;
+  padding: 5px 8px;
+}
+
+.checkoutOrganismo-btnPagar {
+  padding: 10px 20px;
+  background-color: #004b8d;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.checkoutOrganismo-btnPagar:hover {
+  background-color: #003366;
+}
+
+
+.checkout-container {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.checkout-carrito,
+.checkout-cliente,
+.checkout-direccion {
+  margin-bottom: 25px;
+}
+
+.checkout-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.checkout-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pagar-btn {
+  background-color: #3498db;
+  color: #fff;
+}
+
+.volver-btn {
+  background-color: #bdc3c7;
+  color: #2c3e50;
+}
+
