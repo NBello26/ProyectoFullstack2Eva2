@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import Boton from "../atomos/Boton.jsx";
-import { obtenerUsuarios } from "../../data/users";
 
-const TablaUsuarios = () => {
-  const [usuarios, setUsuarios] = useState([]);
+const TablaUsuarios = ({ usuarios }) => {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const listaUsuarios = obtenerUsuarios(); // obtenemos usuarios desde la BD simulada
-    setUsuarios(listaUsuarios);
-  }, []);
 
   return (
     <table className="tabla-usuarios">

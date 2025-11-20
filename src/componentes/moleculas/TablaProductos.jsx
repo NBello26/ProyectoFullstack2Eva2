@@ -11,19 +11,20 @@ const TablaProductos = ({ productos }) => {
         <tr>
           <th>Nombre</th>
           <th>Precio</th>
-          <th>Tipo Precio</th> {/* nueva columna */}
+          <th>Tipo Precio</th>
           <th>Descripción</th>
           <th>Cantidad</th>
           <th>Categoría</th>
           <th>Acciones</th>
         </tr>
       </thead>
+
       <tbody>
         {productos.map((producto) => (
           <tr key={producto.id}>
             <td>{producto.nombre}</td>
             <td>${producto.precio}</td>
-            <td>{producto.tipoPrecio}</td> {/* mostramos el tipo de precio */}
+            <td>{producto.tipoPrecio}</td>
             <td>{producto.descripcion}</td>
             <td>{producto.cantidad}</td>
             <td>{producto.categoria}</td>

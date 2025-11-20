@@ -1,11 +1,3 @@
-/*
-  Organismo: MainProductos
-  Contiene:
-    - TablaProductos (molécula)
-    - Botones de acción (átomos: Boton, Link)
-  Se utiliza dentro de AdminTemplate para mantener la plantilla del admin
-*/
-
 import React, { useEffect, useState } from "react";
 import TablaProductos from "../moleculas/TablaProductos.jsx";
 import "../../estilos/mainProductosPage.css";
@@ -14,8 +6,20 @@ const MainProductos = () => {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("productos")) || [];
-    setProductos(data);
+    const fetchProductos = async () => {
+      try {
+        const resp = await fetch("http://localhost:3000/api/productos");
+        if (!resp.ok) throw new Error("Error al obtener productos");
+
+        const data = await resp.json();
+        setProductos(data);
+      } catch (error) {
+        console.error("Error cargando productos:", error);
+        alert("No se pudieron cargar los productos desde el servidor.");
+      }
+    };
+
+    fetchProductos();
   }, []);
 
   return (

@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; // Link para navegación simple
+import { Link } from "react-router-dom";
 import TablaUsuarios from "../moleculas/TablaUsuarios.jsx";
 
 const MainUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("usuarios")) || [];
-    setUsuarios(data);
+    const fetchUsuarios = async () => {
+      try {
+        const resp = await fetch("http://localhost:3000/api/usuarios");
+        if (!resp.ok) throw new Error("Error al obtener usuarios");
+
+        const data = await resp.json();
+        setUsuarios(data); // Guardar en estado lo que viene del backend
+      } catch (error) {
+        console.error("Error cargando usuarios:", error);
+        alert("No se pudieron cargar los usuarios desde el servidor.");
+      }
+    };
+
+    fetchUsuarios();
   }, []);
 
-  // Función para redirigir a la edición del usuario
-  const handleEditar = (index) => {
-    // Igual que RegistroUserAdmin, se mantiene simple
-    window.location.href = `/editarUsuario?index=${index}`;
+  // 👉 Mantengo la misma lógica que usabas
+  const handleEditar = (id) => {
+    window.location.href = `/editarUsuario?id=${id}`;
   };
 
   return (

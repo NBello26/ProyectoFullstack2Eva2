@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // <-- importamos useNavigate
+import { useNavigate } from "react-router-dom";
 import CarritoItem from "../moleculas/CarritoItem";
 import CarritoButton from "../atomos/CarritoButton";
 import "../../estilos/carrito.css";
@@ -7,12 +7,12 @@ import "../../estilos/carrito.css";
 const CarritoOrganismo = () => {
   const [carrito, setCarrito] = useState([]);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
-  const navigate = useNavigate(); // <-- inicializamos navigate
+  const navigate = useNavigate();
 
   const cargarCarrito = () => {
     const activo = JSON.parse(localStorage.getItem("usuarioActivo"));
     if (!activo) {
-      window.location.href = "/";
+      navigate("/");
       return;
     }
     setUsuarioActivo(activo);
@@ -37,22 +37,33 @@ const CarritoOrganismo = () => {
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
   };
 
-  const actualizarProductos = (productosActualizados) => {
-    localStorage.setItem("productos", JSON.stringify(productosActualizados));
+  const devolverStock = async (producto, cantidad) => {
+    try {
+      // Obtener el producto actual desde la BD
+      const res = await fetch(`http://localhost:3000/api/productos/${producto.id}`);
+      if (!res.ok) throw new Error("Producto no encontrado");
+      const productoBD = await res.json();
+
+      // Actualizar stock sumando la cantidad devuelta
+      await fetch(`http://localhost:3000/api/productos/${producto.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...productoBD, cantidad: productoBD.cantidad + cantidad }),
+      });
+    } catch (err) {
+      console.error("Error al devolver stock:", err);
+      alert("No se pudo actualizar el stock del producto.");
+    }
   };
 
-  const eliminarDelCarrito = (index) => {
+  const eliminarDelCarrito = async (index) => {
     if (!usuarioActivo) return;
 
     const nuevoCarrito = [...carrito];
     const productoEliminado = nuevoCarrito.splice(index, 1)[0];
 
-    const productos = JSON.parse(localStorage.getItem("productos")) || [];
-    const prodIndex = productos.findIndex(p => p.id === productoEliminado.id);
-    if (prodIndex !== -1) {
-      productos[prodIndex].cantidad += productoEliminado.cantidadCarrito || 1;
-      actualizarProductos(productos);
-    }
+    // Devolver la cantidad correspondiente al stock en la BD
+    await devolverStock(productoEliminado, productoEliminado.cantidadCarrito || 1);
 
     const usuarioActualizado = { ...usuarioActivo, carrito: nuevoCarrito };
     setCarrito(nuevoCarrito);
@@ -61,18 +72,14 @@ const CarritoOrganismo = () => {
     window.dispatchEvent(new Event("storage"));
   };
 
-  const vaciarCarrito = () => {
+  const vaciarCarrito = async () => {
     if (!usuarioActivo) return;
     if (!window.confirm("¿Seguro que deseas vaciar todo el carrito?")) return;
 
-    const productos = JSON.parse(localStorage.getItem("productos")) || [];
-    carrito.forEach(item => {
-      const prodIndex = productos.findIndex(p => p.id === item.id);
-      if (prodIndex !== -1) {
-        productos[prodIndex].cantidad += item.cantidadCarrito || 1;
-      }
-    });
-    actualizarProductos(productos);
+    // Devolver stock de todos los productos del carrito
+    for (const item of carrito) {
+      await devolverStock(item, item.cantidadCarrito || 1);
+    }
 
     const usuarioActualizado = { ...usuarioActivo, carrito: [] };
     setCarrito([]);
@@ -83,9 +90,7 @@ const CarritoOrganismo = () => {
 
   const finalizarCompra = () => {
     if (!usuarioActivo) return;
-
-    // Redirigir a CheckoutPage
-    navigate("/checkout"); // <-- aquí redirige
+    navigate("/checkout");
   };
 
   const total = carrito.reduce(

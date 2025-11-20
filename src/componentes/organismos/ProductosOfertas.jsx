@@ -1,16 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { obtenerProductos } from "../../data/products";
-import ProductoCardDetalle from "../moleculas/ProductoCardDetalle.jsx"; // usamos la card compartida
+import ProductoCardDetalle from "../moleculas/ProductoCardDetalle.jsx"; // card compartida
 import "../../estilos/paginasProductos.css";
 
 const ProductosOfertas = () => {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
-    const todos = obtenerProductos();
-    const ofertas = todos.filter(p => p.tipoPrecio === "oferta");
-    setProductos(ofertas);
+    const fetchProductos = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/productos");
+        if (!res.ok) throw new Error("Error al obtener productos");
+        const data = await res.json();
+        const ofertas = data.filter(p => p.tipoPrecio === "oferta");
+        setProductos(ofertas);
+      } catch (err) {
+        console.error(err);
+        setProductos([]);
+      }
+    };
+
+    fetchProductos();
   }, []);
+
+  if (productos.length === 0) {
+    return <div className="tienda-vacio">No hay productos en oferta.</div>;
+  }
 
   return (
     <div className="organismo-ofertas">

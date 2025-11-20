@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Boton from "../atomos/Boton.jsx";
 import SelectRegionComuna from "../moleculas/SelectRegionComuna.jsx";
-import { crearUsuario, obtenerUsuarioPorCorreo } from "../../data/users.js";
 import "../../estilos/formRegistroAdmin.css";
 
 const FormRegistroUsuario = () => {
@@ -19,67 +18,89 @@ const FormRegistroUsuario = () => {
   const [comuna, setComuna] = useState("");
   const [tipusuario, setTipUsuario] = useState("cliente");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🔍 Validaciones
+    // VALIDACIONES
     if (
       !correo.includes("@duoc.cl") &&
       !correo.includes("@profesor.duoc.cl") &&
       !correo.includes("@gmail.com")
     ) {
-      alert("El correo debe ser de los dominios: @duoc.cl, @profesor.duoc.cl o @gmail.com");
+      alert("El correo debe ser válido (@duoc.cl, @profesor.duoc.cl, @gmail.com)");
       return;
     }
+
     if (correo !== confirmarCorreo) {
       alert("Los correos no coinciden.");
       return;
     }
+
     if (contraseña.length < 4 || contraseña.length > 10) {
       alert("La contraseña debe tener entre 4 y 10 caracteres.");
       return;
     }
+
     if (contraseña !== confirmarContraseña) {
       alert("Las contraseñas no coinciden.");
       return;
     }
+
     if (!region || !comuna) {
-      alert("Debe seleccionar una región y una comuna.");
+      alert("Debe seleccionar región y comuna.");
       return;
     }
 
-    // 🧠 Verificar si el correo ya existe
-    const existe = obtenerUsuarioPorCorreo(correo);
-    if (existe) {
-      alert("Ya existe un usuario registrado con ese correo.");
-      return;
+    try {
+      // 1️⃣ Verificar si el correo ya existe consultando al backend
+      const checkResp = await fetch("http://localhost:3000/api/usuarios");
+      const listaUsuarios = await checkResp.json();
+
+      const existe = listaUsuarios.some((u) => u.correo === correo);
+      if (existe) {
+        alert("Ya existe un usuario con ese correo.");
+        return;
+      }
+
+      // 2️⃣ Crear usuario en backend
+      const nuevoUsuario = {
+        nombre,
+        correo,
+        contraseña,
+        telefono,
+        region,
+        comuna,
+        tipusuario,
+      };
+
+      const response = await fetch("http://localhost:3000/api/usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(nuevoUsuario),
+      });
+
+      if (!response.ok) {
+        alert("Error al registrar usuario.");
+        return;
+      }
+
+      alert("Usuario registrado correctamente ✅");
+
+      // 3️⃣ Limpiar formulario
+      setNombre("");
+      setCorreo("");
+      setConfirmarCorreo("");
+      setContraseña("");
+      setConfirmarContraseña("");
+      setTelefono("");
+      setRegion("");
+      setComuna("");
+      setTipUsuario("cliente");
+
+    } catch (error) {
+      console.error(error);
+      alert("Error de conexión con el servidor.");
     }
-
-    // ✅ Crear usuario usando función centralizada
-    const nuevoUsuario = {
-      nombre,
-      correo,
-      contraseña,
-      telefono,
-      region,
-      comuna,
-      tipusuario, // puede ser admin, vendedor o cliente
-    };
-
-    crearUsuario(nuevoUsuario);
-
-    alert("Usuario registrado correctamente ✅");
-
-    // Reiniciar formulario
-    setNombre("");
-    setCorreo("");
-    setConfirmarCorreo("");
-    setContraseña("");
-    setConfirmarContraseña("");
-    setTelefono("");
-    setRegion("");
-    setComuna("");
-    setTipUsuario("cliente");
   };
 
   return (
@@ -107,6 +128,7 @@ const FormRegistroUsuario = () => {
               placeholder="ejemplo@duoc.cl"
             />
           </div>
+
           <div>
             <label>Confirmar Correo</label>
             <input
@@ -131,6 +153,7 @@ const FormRegistroUsuario = () => {
               maxLength="10"
             />
           </div>
+
           <div>
             <label>Confirmar Contraseña</label>
             <input
@@ -160,7 +183,11 @@ const FormRegistroUsuario = () => {
         />
 
         <label>Tipo de usuario</label>
-        <select value={tipusuario} onChange={(e) => setTipUsuario(e.target.value)} required>
+        <select
+          value={tipusuario}
+          onChange={(e) => setTipUsuario(e.target.value)}
+          required
+        >
           <option value="cliente">Cliente</option>
           <option value="vendedor">Vendedor</option>
           <option value="admin">Administrador</option>

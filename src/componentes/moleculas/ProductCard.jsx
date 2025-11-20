@@ -9,20 +9,27 @@ const ProductCard = ({ producto }) => {
   const navigate = useNavigate();
 
   const verDetalles = () => {
-    const nombreEncode = encodeURIComponent(producto.nombre);
-    navigate(`/detallesProducto/${nombreEncode}`);
+    navigate(`/detallesProducto/${producto.id}`); // 🔥 usar ID desde BD
   };
 
   return (
     <div className="product-card">
-      <div className="product-image">Imagen del Producto</div>
+      <div className="product-image">
+        {/* Si tu BD tiene URL de imagen, úsala: */}
+        {producto.imagen ? (
+          <img src={producto.imagen} alt={producto.nombre} />
+        ) : (
+          "Imagen del Producto"
+        )}
+      </div>
+
       <div className="product-info">
         <h3 className="product-title">{producto.nombre}</h3>
         <p className="product-price">${producto.precio}</p>
         <p className="product-quantity">
           Disponible: {producto.cantidad} unidades
         </p>
-        {/* Botón que usa navigate */}
+
         <button className="BotonDetalles" onClick={verDetalles}>
           Ver Detalles
         </button>

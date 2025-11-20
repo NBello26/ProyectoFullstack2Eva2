@@ -1,8 +1,14 @@
 import React from "react";
-import BotonDetallesProducto from "./BotonDetallesProducto.jsx"; // molécula existente para "Ver detalles"
+import { useNavigate } from "react-router-dom";
 import "../../estilos/productoCardDetalle.css";
 
 const ProductoCardDetalle = ({ producto }) => {
+  const navigate = useNavigate();
+
+  const verDetalles = () => {
+    navigate(`/detallesProducto/${producto.id}`); // 🔹 navegar por ID
+  };
+
   return (
     <div className="producto-card-detalle">
       <h3>{producto.nombre}</h3>
@@ -11,7 +17,9 @@ const ProductoCardDetalle = ({ producto }) => {
       <p>Tipo Precio: {producto.tipoPrecio || "normal"}</p>
       <p>Categoría: {producto.categoria}</p>
       <p>Cantidad Disponible: {producto.cantidad}</p>
-      <BotonDetallesProducto producto={producto} />
+      <button className="btn-detalle" onClick={verDetalles}>
+        Ver detalles
+      </button>
     </div>
   );
 };

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Boton from "../atomos/Boton.jsx";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { obtenerProductoPorId, actualizarProducto } from "../../data/products";
 
 const FormEditarProducto = () => {
   const [searchParams] = useSearchParams();
@@ -13,7 +12,7 @@ const FormEditarProducto = () => {
   const [descripcion, setDescripcion] = useState("");
   const [cantidad, setCantidad] = useState("");
   const [categoria, setCategoria] = useState("Snacks");
-  const [tipoPrecio, setTipoPrecio] = useState("normal"); // nuevo
+  const [tipoPrecio, setTipoPrecio] = useState("normal");
 
   useEffect(() => {
     if (!productoId) {
@@ -22,40 +21,49 @@ const FormEditarProducto = () => {
       return;
     }
 
-    const producto = obtenerProductoPorId(productoId);
-    if (!producto) {
-      alert("Producto no encontrado");
-      navigate("/listproductos");
-      return;
-    }
+    const fetchProducto = async () => {
+      try {
+        const resp = await fetch(`http://localhost:3000/api/productos/${productoId}`);
+        if (!resp.ok) throw new Error("No se pudo obtener el producto");
 
-    setNombre(producto.nombre || "");
-    setPrecio(producto.precio || "");
-    setDescripcion(producto.descripcion || "");
-    setCantidad(producto.cantidad || "");
-    setCategoria(producto.categoria || "Snacks");
-    setTipoPrecio(producto.tipoPrecio || "normal"); // inicializamos
+        const data = await resp.json();
+
+        setNombre(data.nombre || "");
+        setPrecio(data.precio || "");
+        setDescripcion(data.descripcion || "");
+        setCantidad(data.cantidad || "");
+        setCategoria(data.categoria || "Snacks");
+        setTipoPrecio(data.tipoPrecio || "normal");
+
+      } catch (error) {
+        console.error("Error cargando producto:", error);
+        alert("Error al cargar el producto.");
+        navigate("/listproductos");
+      }
+    };
+
+    fetchProducto();
   }, [productoId, navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const precioNum = parseFloat(precio);
     const cantidadNum = parseInt(cantidad);
 
-    if (nombre.trim() === "") {
+    if (!nombre.trim()) {
       alert("El nombre es obligatorio");
       return;
     }
     if (isNaN(precioNum) || precioNum < 0) {
-      alert("Por favor, ingrese un precio válido");
+      alert("Ingrese un precio válido");
       return;
     }
     if (isNaN(cantidadNum) || cantidadNum < 0) {
-      alert("Por favor, ingrese una cantidad válida");
+      alert("Ingrese una cantidad válida");
       return;
     }
-    if (descripcion.trim() === "") {
+    if (!descripcion.trim()) {
       alert("La descripción es obligatoria");
       return;
     }
@@ -66,13 +74,25 @@ const FormEditarProducto = () => {
       descripcion,
       cantidad: cantidadNum,
       categoria,
-      tipoPrecio, // guardamos el tipo de precio
+      tipoPrecio,
     };
 
-    actualizarProducto(productoId, productoActualizado);
+    try {
+      const resp = await fetch(`http://localhost:3000/api/productos/${productoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productoActualizado),
+      });
 
-    alert("Producto actualizado correctamente");
-    navigate("/listproductos");
+      if (!resp.ok) throw new Error("No se pudo actualizar el producto");
+
+      alert("Producto actualizado correctamente");
+      navigate("/listproductos");
+
+    } catch (error) {
+      console.error("Error al actualizar:", error);
+      alert("Error al actualizar el producto");
+    }
   };
 
   return (
@@ -80,10 +100,21 @@ const FormEditarProducto = () => {
       <h2>Editar Producto (Admin)</h2>
       <form onSubmit={handleSubmit}>
         <label>Nombre:</label>
-        <input type="text" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+        <input 
+          type="text" 
+          value={nombre} 
+          onChange={(e) => setNombre(e.target.value)} 
+          required 
+        />
 
         <label>Precio:</label>
-        <input type="number" min="0" value={precio} onChange={(e) => setPrecio(e.target.value)} required />
+        <input 
+          type="number" 
+          min="0" 
+          value={precio} 
+          onChange={(e) => setPrecio(e.target.value)} 
+          required 
+        />
 
         <label>Tipo Precio:</label>
         <select value={tipoPrecio} onChange={(e) => setTipoPrecio(e.target.value)}>
@@ -92,10 +123,21 @@ const FormEditarProducto = () => {
         </select>
 
         <label>Descripción:</label>
-        <textarea rows="4" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} required></textarea>
+        <textarea 
+          rows="4" 
+          value={descripcion} 
+          onChange={(e) => setDescripcion(e.target.value)} 
+          required
+        ></textarea>
 
         <label>Cantidad:</label>
-        <input type="number" min="0" value={cantidad} onChange={(e) => setCantidad(e.target.value)} required />
+        <input 
+          type="number" 
+          min="0" 
+          value={cantidad} 
+          onChange={(e) => setCantidad(e.target.value)} 
+          required 
+        />
 
         <label>Categoría:</label>
         <select value={categoria} onChange={(e) => setCategoria(e.target.value)}>

@@ -1,19 +1,14 @@
-// ContactoForm.jsx
-// 🧱 Molécula: formulario de contacto
-// 🔹 Reutiliza átomo Boton para el botón de envío
-// 🔹 Maneja validaciones y guardado en localStorage
-
 import React, { useState } from "react";
 import Boton from "../atomos/Boton"; // ✅ reutilizamos átomo
 import "../../estilos/contacto.css";
 
 const ContactoForm = () => {
-    
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [comentario, setComentario] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validaciones
@@ -30,7 +25,9 @@ const ContactoForm = () => {
       !correo.endsWith("@profesor.duoc.cl") &&
       !correo.endsWith("@gmail.com")
     ) {
-      alert("El correo debe ser de los dominios: @duoc.cl, @profesor.duoc.cl o @gmail.com");
+      alert(
+        "El correo debe ser de los dominios: @duoc.cl, @profesor.duoc.cl o @gmail.com"
+      );
       return;
     }
     if (!comentario || comentario.length > 500) {
@@ -39,17 +36,31 @@ const ContactoForm = () => {
     }
 
     const contacto = { nombre, correo, comentario };
+    setLoading(true);
 
-    const contactos = JSON.parse(localStorage.getItem("contactos")) || [];
-    contactos.push(contacto);
-    localStorage.setItem("contactos", JSON.stringify(contactos));
+    try {
+      const res = await fetch("http://localhost:3000/api/contacto", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contacto),
+      });
 
-    alert("Mensaje enviado correctamente ✅");
+      if (!res.ok) {
+        throw new Error("Error al enviar el mensaje");
+      }
 
-    // Resetear formulario
-    setNombre("");
-    setCorreo("");
-    setComentario("");
+      alert("Mensaje enviado correctamente ✅");
+
+      // Resetear formulario
+      setNombre("");
+      setCorreo("");
+      setComentario("");
+    } catch (err) {
+      console.error(err);
+      alert("Hubo un error al enviar el mensaje. Intenta nuevamente.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,7 +99,7 @@ const ContactoForm = () => {
           required
         />
 
-        <Boton texto="Enviar Mensaje" type="submit" />
+        <Boton texto={loading ? "Enviando..." : "Enviar Mensaje"} type="submit" />
       </form>
     </section>
   );

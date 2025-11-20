@@ -1,14 +1,15 @@
 // LoginForm.jsx
 // 🧱 Organismo: formulario de login usando los módulos simulados (users.js y usuarioActivo.js)
 
+// LoginForm.jsx
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Boton from "../atomos/Boton";
 import BotonRegistro from "../atomos/BotonRegistro";
 import Titulo from "../atomos/Titulo";
 
-// 🧩 Importamos funciones del “backend simulado”
-import { obtenerUsuarios } from "../../data/users";
+// ✔ mantenemos usuarioActivo para carrito y sesión
 import { iniciarSesion } from "../../data/usuarioActivo";
 
 const LoginForm = () => {
@@ -16,22 +17,36 @@ const LoginForm = () => {
   const [contrasena, setContrasena] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Obtenemos los usuarios de la “BD simulada”
-    const usuarios = obtenerUsuarios();
+    try {
+      // Obtener usuarios desde tu backend real
+      const respuesta = await fetch("http://localhost:3000/api/usuarios");
 
-    // Buscamos coincidencia
-    const usuarioEncontrado = usuarios.find(
-      (usuario) => usuario.correo === correo && usuario.contraseña === contrasena
-    );
+      if (!respuesta.ok) {
+        alert("Error al conectar con el servidor.");
+        return;
+      }
 
-    if (usuarioEncontrado) {
-      // Guardamos el usuario activo en memoria simulada
+      const usuarios = await respuesta.json();
+
+      // Buscar usuario por correo + contraseña
+      const usuarioEncontrado = usuarios.find(
+        (usuario) =>
+          usuario.correo === correo &&
+          usuario.contraseña === contrasena
+      );
+
+      if (!usuarioEncontrado) {
+        alert("Correo o contraseña incorrectos");
+        return;
+      }
+
+      // Guardar usuario activo en localStorage
       iniciarSesion(usuarioEncontrado);
 
-      // Redirigimos según tipo de usuario
+      // Redirigir según tipo de usuario
       switch (usuarioEncontrado.tipusuario) {
         case "cliente":
           navigate("/paginaPrincipal");
@@ -45,8 +60,10 @@ const LoginForm = () => {
         default:
           alert("Tipo de usuario desconocido");
       }
-    } else {
-      alert("Correo o contraseña incorrectos");
+
+    } catch (error) {
+      console.error("Error en login:", error);
+      alert("Error en la conexión al servidor.");
     }
   };
 
@@ -87,4 +104,3 @@ const LoginForm = () => {
 };
 
 export default LoginForm;
-

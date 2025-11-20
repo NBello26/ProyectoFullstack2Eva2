@@ -1,17 +1,34 @@
 // 🧱 Organismo: ListarProductosCriticosOrganismo
 // Muestra los productos con stock menor a 5 en una tabla simple
-
 import React, { useEffect, useState } from "react";
-import { obtenerProductos } from "../../data/products"; // función ya existente
 import "../../estilos/listarProductosCriticosPage.css";
 
 const ListarProductosCriticosOrganismo = () => {
   const [productosCriticos, setProductosCriticos] = useState([]);
 
   useEffect(() => {
-    const todosProductos = obtenerProductos();
-    const filtrados = todosProductos.filter(p => p.cantidad < 5);
-    setProductosCriticos(filtrados);
+    const cargarProductos = async () => {
+      try {
+        const respuesta = await fetch("http://localhost:3000/api/productos");
+
+        if (!respuesta.ok) {
+          console.error("Error al obtener productos");
+          return;
+        }
+
+        const productos = await respuesta.json();
+
+        // Filtrar productos con stock crítico
+        const criticos = productos.filter(p => p.cantidad < 5);
+
+        setProductosCriticos(criticos);
+
+      } catch (error) {
+        console.error("Error conectando al servidor:", error);
+      }
+    };
+
+    cargarProductos();
   }, []);
 
   return (
@@ -19,7 +36,9 @@ const ListarProductosCriticosOrganismo = () => {
       <h1 className="listarCriticosOrganismo-titulo">Productos Críticos</h1>
 
       {productosCriticos.length === 0 ? (
-        <p className="listarCriticosOrganismo-mensaje">No hay productos con stock crítico.</p>
+        <p className="listarCriticosOrganismo-mensaje">
+          No hay productos con stock crítico.
+        </p>
       ) : (
         <table className="listarCriticosOrganismo-tabla">
           <thead>
@@ -38,7 +57,9 @@ const ListarProductosCriticosOrganismo = () => {
                 <td>{prod.nombre}</td>
                 <td>{prod.categoria}</td>
                 <td>${prod.precio.toLocaleString()}</td>
-                <td className="listarCriticosOrganismo-stockBajo">{prod.cantidad}</td>
+                <td className="listarCriticosOrganismo-stockBajo">
+                  {prod.cantidad}
+                </td>
               </tr>
             ))}
           </tbody>

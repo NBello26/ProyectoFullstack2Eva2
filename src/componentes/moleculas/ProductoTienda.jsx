@@ -1,19 +1,20 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import "../../estilos/tiendaProductos.css"; // ✅ nuevo CSS unificado y único
+import "../../estilos/tiendaProductos.css";
 
 const ProductoTienda = ({ producto }) => {
-  const { nombre, precio, cantidad } = producto;
-  const nombreEncode = encodeURIComponent(nombre);
+  const { id, nombre, precio, cantidad, imagen } = producto;
   const navigate = useNavigate();
 
   const verDetalles = () => {
-    navigate(`/detallesProducto/${nombreEncode}`);
+    navigate(`/detallesProducto/${id}`); // 🔹 Usar ID para ir a detalles
   };
 
   return (
     <div className="tienda-card">
-      <div className="tienda-card-img">Imagen del Producto</div>
+      <div className="tienda-card-img">
+        {imagen ? <img src={imagen} alt={nombre} /> : "Imagen del Producto"}
+      </div>
       <div className="tienda-card-info">
         <h3 className="tienda-card-title">{nombre}</h3>
         <p className="tienda-card-price">${precio}</p>

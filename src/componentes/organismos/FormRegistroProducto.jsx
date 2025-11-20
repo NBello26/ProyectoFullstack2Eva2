@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { crearProducto, obtenerProductos } from "../../data/products";
 
 const FormRegistroProducto = () => {
   const [nombre, setNombre] = useState("");
@@ -11,10 +10,10 @@ const FormRegistroProducto = () => {
   const [tipoPrecio, setTipoPrecio] = useState("normal");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
+    // 🔹 Validaciones
     if (nombre.trim() === "") {
       alert("El nombre del producto es obligatorio.");
       return;
@@ -37,35 +36,45 @@ const FormRegistroProducto = () => {
       return;
     }
 
-    // Calcular el ID siguiente
-    const productos = obtenerProductos();
-    const nextId = productos.length > 0
-      ? Math.max(...productos.map((p) => p.id)) + 1
-      : 1;
-
-    // Crear objeto producto
-    const producto = {
-      id: nextId,
+    // 🔹 Crear objeto a enviar al backend
+    const nuevoProducto = {
       nombre,
-      precio: precioNum, // 🔹 siempre entero
+      precio: precioNum,
       descripcion,
       cantidad: cantidadNum,
       categoria,
       tipoPrecio,
     };
 
-    // Guardar producto
-    crearProducto(producto);
+    try {
+      const respuesta = await fetch("http://localhost:3000/api/productos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nuevoProducto),
+      });
 
-    alert("Producto registrado correctamente");
+      if (!respuesta.ok) {
+        const error = await respuesta.json();
+        alert(`Error: ${error.message || "No se pudo registrar el producto"}`);
+        return;
+      }
 
-    // Limpiar formulario
-    setNombre("");
-    setPrecio("");
-    setDescripcion("");
-    setCantidad("");
-    setCategoria("Snacks");
-    setTipoPrecio("normal");
+      alert("Producto registrado correctamente");
+
+      // 🔹 Limpiar formulario
+      setNombre("");
+      setPrecio("");
+      setDescripcion("");
+      setCantidad("");
+      setCategoria("Snacks");
+      setTipoPrecio("normal");
+
+    } catch (error) {
+      alert("Error al conectar con el servidor");
+      console.error(error);
+    }
   };
 
   return (
@@ -87,7 +96,7 @@ const FormRegistroProducto = () => {
           <input
             type="number"
             min="0"
-            step="1" // 🔹 Solo números enteros
+            step="1"
             value={precio}
             onChange={(e) => setPrecio(e.target.value)}
             required

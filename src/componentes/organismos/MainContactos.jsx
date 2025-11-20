@@ -1,19 +1,26 @@
-/*
-  Organismo: MainContactos
-  - Se encarga de mostrar la tabla de contactos
-  - Reutiliza estilos de usuario.css
-  - No necesita nuevos átomos/moléculas porque solo se muestra info
-  - Maneja localStorage para obtener contactos
-*/
-
 import React, { useEffect, useState } from "react";
 
 const MainContactos = () => {
   const [contactos, setContactos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const data = JSON.parse(localStorage.getItem("contactos")) || [];
-    setContactos(data);
+    const fetchContactos = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/contacto");
+        if (!res.ok) throw new Error("Error al obtener los contactos");
+        const data = await res.json();
+        setContactos(data);
+      } catch (err) {
+        console.error(err);
+        setContactos([]);
+        alert("No se pudieron cargar los contactos. Intenta más tarde.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContactos();
   }, []);
 
   return (
@@ -22,7 +29,9 @@ const MainContactos = () => {
         <a href="/admin" className="btn-back">Volver al Panel</a>
       </div>
 
-      {contactos.length === 0 ? (
+      {loading ? (
+        <p style={{ textAlign: "center", marginTop: "2em" }}>Cargando contactos...</p>
+      ) : contactos.length === 0 ? (
         <p style={{ textAlign: "center", marginTop: "2em" }}>
           No hay contactos guardados.
         </p>
@@ -36,8 +45,8 @@ const MainContactos = () => {
             </tr>
           </thead>
           <tbody>
-            {contactos.map((c, i) => (
-              <tr key={i}>
+            {contactos.map((c) => (
+              <tr key={c.id}>
                 <td>{c.nombre}</td>
                 <td>{c.correo}</td>
                 <td>{c.comentario}</td>

@@ -1,17 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { obtenerProductos } from "../../data/products";
-import ProductoCardDetalle from "../moleculas/ProductoCardDetalle.jsx"; // usamos la misma card
+import ProductoCardDetalle from "../moleculas/ProductoCardDetalle.jsx"; // card compartida
 import "../../estilos/paginasProductos.css";
 
 const ProductosPorCategoria = () => {
   const [categoria, setCategoria] = useState("Snacks");
   const [productos, setProductos] = useState([]);
+  const [todosProductos, setTodosProductos] = useState([]);
 
+  // Traer todos los productos desde la BD al cargar la página
   useEffect(() => {
-    const todos = obtenerProductos();
-    const filtrados = todos.filter(p => p.categoria === categoria);
+    const fetchProductos = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/api/productos");
+        if (!res.ok) throw new Error("Error al obtener productos");
+        const data = await res.json();
+        setTodosProductos(data);
+      } catch (err) {
+        console.error(err);
+        setTodosProductos([]);
+      }
+    };
+    fetchProductos();
+  }, []);
+
+  // Filtrar productos por categoría cada vez que cambie
+  useEffect(() => {
+    const filtrados = todosProductos.filter(p => p.categoria === categoria);
     setProductos(filtrados);
-  }, [categoria]);
+  }, [categoria, todosProductos]);
 
   return (
     <div className="organismo-categoria">
@@ -23,11 +39,15 @@ const ProductosPorCategoria = () => {
         <option value="Dulces">Dulces</option>
       </select>
 
-      <div className="productos-grid-categoria">
-        {productos.map(p => (
-          <ProductoCardDetalle key={p.id} producto={p} />
-        ))}
-      </div>
+      {productos.length === 0 ? (
+        <p className="tienda-vacio">No hay productos en la categoría "{categoria}".</p>
+      ) : (
+        <div className="productos-grid-categoria">
+          {productos.map(p => (
+            <ProductoCardDetalle key={p.id} producto={p} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

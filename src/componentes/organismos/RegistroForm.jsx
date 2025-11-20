@@ -5,7 +5,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Boton from "../atomos/Boton";
 import SelectRegionComuna from "../moleculas/SelectRegionComuna";
-import { crearUsuario, obtenerUsuarioPorCorreo } from "../../data/users";
 import "../../estilos/registro.css";
 
 const RegistroForm = () => {
@@ -13,54 +12,50 @@ const RegistroForm = () => {
   const [comuna, setComuna] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const nombre = e.target.nombre.value.trim();
-    const correo = e.target.correo.value.trim();
-    const confirmarCorreo = e.target.confirmarCorreo.value.trim();
-    const contraseña = e.target.contrasena.value.trim();
-    const confirmarContrasena = e.target.confirmarContrasena.value.trim();
-    const telefono = e.target.telefono.value.trim();
+  const nombre = e.target.nombre.value.trim();
+  const correo = e.target.correo.value.trim();
+  const confirmarCorreo = e.target.confirmarCorreo.value.trim();
+  const contraseña = e.target.contrasena.value.trim();
+  const confirmarContrasena = e.target.confirmarContrasena.value.trim();
+  const telefono = e.target.telefono.value.trim();
 
-    // 🔍 Validaciones
-    if (
-      !correo.includes("@duoc.cl") &&
-      !correo.includes("@profesor.duoc.cl") &&
-      !correo.includes("@gmail.com")
-    ) {
-      alert("El correo debe ser de los dominios: @duoc.cl, @profesor.duoc.cl o @gmail.com");
-      return;
-    }
+  // 🔍 Validaciones locales
+  if (
+    !correo.includes("@duoc.cl") &&
+    !correo.includes("@profesor.duoc.cl") &&
+    !correo.includes("@gmail.com")
+  ) {
+    alert("El correo debe ser válido");
+    return;
+  }
 
-    if (correo !== confirmarCorreo) {
-      alert("Los correos no coinciden.");
-      return;
-    }
+  if (correo !== confirmarCorreo) return alert("Los correos no coinciden.");
 
-    if (contraseña.length < 4 || contraseña.length > 10) {
-      alert("La contraseña debe tener entre 4 y 10 caracteres.");
-      return;
-    }
+  if (contraseña.length < 4 || contraseña.length > 10)
+    return alert("La contraseña debe tener entre 4 y 10 caracteres.");
 
-    if (contraseña !== confirmarContrasena) {
-      alert("Las contraseñas no coinciden.");
-      return;
-    }
+  if (contraseña !== confirmarContrasena)
+    return alert("Las contraseñas no coinciden.");
 
-    if (!region || !comuna) {
-      alert("Debe seleccionar una región y una comuna.");
-      return;
-    }
+  if (!region || !comuna)
+    return alert("Debe seleccionar región y comuna.");
 
-    // 🧠 Verificar si ya existe el correo
-    const existe = obtenerUsuarioPorCorreo(correo);
+  try {
+    // 1️⃣ Verificar si ya existe el correo consultando la lista de usuarios
+    const checkResp = await fetch("http://localhost:3000/api/usuarios");
+    const listaUsuarios = await checkResp.json();
+
+    const existe = listaUsuarios.some(u => u.correo === correo);
+
     if (existe) {
-      alert("Ya existe un usuario registrado con ese correo.");
+      alert("Ya existe un usuario con ese correo.");
       return;
     }
 
-    // ✅ Crear usuario usando función centralizada
+    // 2️⃣ Crear usuario en el backend
     const nuevoUsuario = {
       nombre,
       correo,
@@ -68,16 +63,30 @@ const RegistroForm = () => {
       telefono,
       region,
       comuna,
-      tipusuario: "cliente", // estándar
+      tipusuario: "cliente",
     };
 
-    crearUsuario(nuevoUsuario);
+    const response = await fetch("http://localhost:3000/api/usuarios", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(nuevoUsuario),
+    });
 
-    alert("Usuario registrado correctamente ✅");
+    if (!response.ok) {
+      alert("Error al registrar usuario");
+      return;
+    }
+
+    alert("Usuario registrado correctamente");
     e.target.reset();
     setRegion("");
     setComuna("");
-  };
+  } catch (error) {
+    console.error(error);
+    alert("Error de conexión con el servidor");
+  }
+};
+
 
   return (
     <div className="registro-container">
