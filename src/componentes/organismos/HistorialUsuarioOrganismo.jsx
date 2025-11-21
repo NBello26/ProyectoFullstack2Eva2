@@ -3,30 +3,41 @@ import { useParams, useNavigate } from "react-router-dom";
 import "../../estilos/historialUsuarioPage.css";
 
 const HistorialUsuarioOrganismo = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // id del usuario
   const navigate = useNavigate();
-  const [usuario, setUsuario] = useState(null);
+  const [ventas, setVentas] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const usuarioEncontrado = usuarios.find((u) => u.id.toString() === id);
-    if (!usuarioEncontrado) {
-      alert("Usuario no encontrado");
-      navigate("/listusuarios");
-      return;
-    }
-    setUsuario(usuarioEncontrado);
+    const cargarHistorial = async () => {
+      try {
+        // 🔹 Traer todas las ventas del usuario
+        const res = await fetch(`http://localhost:3000/api/ventas`);
+        if (!res.ok) throw new Error("No se pudieron obtener las ventas");
+        const todasVentas = await res.json();
+
+        // Filtrar por usuario
+        const ventasUsuario = todasVentas.filter(v => v.id_cliente.toString() === id);
+
+        setVentas(ventasUsuario);
+        setCargando(false);
+      } catch (err) {
+        console.error(err);
+        alert("Error cargando historial");
+        navigate("/listusuarios");
+      }
+    };
+
+    cargarHistorial();
   }, [id, navigate]);
 
-  if (!usuario) return <p>Cargando historial...</p>;
-
-  const historial = usuario.historialCompra || [];
+  if (cargando) return <p>Cargando historial...</p>;
 
   return (
     <div className="historial-container">
-      <h1>Historial de Compras de {usuario.nombre}</h1>
+      <h1>Historial de Compras del Usuario</h1>
 
-      {historial.length === 0 ? (
+      {ventas.length === 0 ? (
         <p>No hay compras registradas.</p>
       ) : (
         <table className="tabla-historial">
@@ -35,16 +46,25 @@ const HistorialUsuarioOrganismo = () => {
               <th>Boleta N°</th>
               <th>Fecha</th>
               <th>Total</th>
-              <th>Estado</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {historial.map((boleta) => (
-              <tr key={boleta.id}>
-                <td>{boleta.id}</td>
-                <td>{boleta.fecha}</td>
-                <td>${boleta.total.toLocaleString()}</td>
-                <td>{boleta.estado}</td>
+            {ventas.map((venta) => (
+              <tr key={venta.id_venta}>
+                <td>{venta.id_venta}</td>
+                <td>{new Date(venta.createdAt).toLocaleString()}</td>
+                <td>${venta.total.toLocaleString()}</td>
+                <td>
+                  <button
+                    className="historial-btn-ver"
+                    onClick={() =>
+                      navigate(`/detalleBoleta/${venta.id_venta}`)
+                    }
+                  >
+                    Ver Boleta
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

@@ -1,132 +1,137 @@
-// 🧠 Organismo: BoletaExitosaOrganismo
-// Muestra la boleta de compra exitosa con opción de descargar PDF
-
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import "../../estilos/boletaPage.css";
 
 const BoletaExitosaOrganismo = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // id_venta
   const navigate = useNavigate();
-  const location = useLocation();
-  const [boleta, setBoleta] = useState(null);
+
+  const [venta, setVenta] = useState(null);
+  const [detalles, setDetalles] = useState([]);
+  const [productosMap, setProductosMap] = useState({});
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo"));
-    if (!usuarioActivo) {
-      navigate("/");
-      return;
-    }
+    const cargarDatos = async () => {
+      try {
+        // 🔹 Traer venta
+        const ventaRes = await fetch(`http://localhost:3000/api/ventas/${id}`);
+        if (!ventaRes.ok) throw new Error("No se pudo obtener la venta");
+        const ventaBD = await ventaRes.json();
 
-    const historial = usuarioActivo.historialCompra || [];
-    const encontrada =
-      historial.find((b) => b.id.toString() === id) || location.state?.boleta;
+        // 🔹 Traer detalles de la venta
+        const detRes = await fetch(`http://localhost:3000/api/detalle-venta/venta/${id}`);
+        if (!detRes.ok) throw new Error("No se pudo obtener los detalles de la venta");
+        const detallesBD = await detRes.json();
 
-    if (!encontrada) {
-      alert("No se encontró la boleta");
-      navigate("/");
-      return;
-    }
+        // 🔹 Traer productos
+        const prodRes = await fetch("http://localhost:3000/api/productos");
+        if (!prodRes.ok) throw new Error("No se pudo obtener los productos");
+        const productosBD = await prodRes.json();
 
-    setBoleta(encontrada);
-  }, [id, location.state, navigate]);
+        // 🔹 Mapear productos por id
+        const mapa = {};
+        productosBD.forEach(p => (mapa[p.id] = p));
+
+        setVenta(ventaBD);
+        setDetalles(detallesBD);
+        setProductosMap(mapa);
+        setCargando(false);
+
+      } catch (err) {
+        console.error(err);
+        alert("Error cargando la boleta");
+        navigate("/paginaPrincipal");
+      }
+    };
+
+    cargarDatos();
+  }, [id, navigate]);
+
+  if (cargando) return <h2 className="boleta-container">Cargando boleta...</h2>;
+  if (!venta) return <h2 className="boleta-container">No existe la venta</h2>;
 
   const generarPDF = () => {
-    if (!boleta) return;
-
     const doc = new jsPDF();
-
     doc.setFontSize(14);
-    doc.text(`Boleta N°: ${boleta.id}`, 14, 20);
-    doc.text(`Fecha: ${boleta.fecha}`, 14, 28);
-    doc.text(`Cliente: ${boleta.usuario.nombre}`, 14, 36);
-    doc.text(`Correo: ${boleta.usuario.correo}`, 14, 44);
-    doc.text(`Teléfono: ${boleta.usuario.telefono}`, 14, 52);
-
+    doc.text(`Boleta N°: ${venta.id_venta}`, 14, 20);
+    doc.text(`Cliente: ${venta.nombre_cliente}`, 14, 28);
+    doc.text(`Correo: ${venta.correo}`, 14, 36);
+    doc.text(`Teléfono: ${venta.telefono}`, 14, 44);
     doc.text(
-      `Dirección: ${boleta.direccion.calle} ${
-        boleta.direccion.departamento || ""
-      }, ${boleta.direccion.comuna}, ${boleta.direccion.region}`,
+      `Dirección: ${venta.calle} ${venta.departamento || ""}, ${venta.comuna}, ${venta.region}`,
       14,
-      60
+      52
     );
-    if (boleta.direccion.indicaciones) {
-      doc.text(`Indicaciones: ${boleta.direccion.indicaciones}`, 14, 68);
-    }
+    if (venta.indicaciones) doc.text(`Indicaciones: ${venta.indicaciones}`, 14, 60);
 
     autoTable(doc, {
-      startY: 78,
+      startY: 70,
       head: [["Producto", "Precio", "Cantidad", "Subtotal"]],
-      body: boleta.productos.map((p) => [
-        p.nombre,
-        `$${p.precio.toLocaleString()}`,
-        p.cantidadCarrito,
-        `$${(p.precio * p.cantidadCarrito).toLocaleString()}`,
-      ]),
+      body: detalles.map(det => {
+        const prod = productosMap[det.id_producto];
+        const precio = prod?.precio || 0;
+        const subtotal = precio * det.cantidad;
+        return [
+          prod?.nombre || "Producto desconocido",
+          `$${precio.toLocaleString()}`,
+          det.cantidad,
+          `$${subtotal.toLocaleString()}`
+        ];
+      })
     });
 
-    doc.text(
-      `Total: $${boleta.total.toLocaleString()}`,
-      14,
-      doc.lastAutoTable.finalY + 10
-    );
-
-    doc.save(`Boleta_${boleta.id}.pdf`);
+    doc.text(`Total: $${venta.total.toLocaleString()}`, 14, doc.lastAutoTable.finalY + 10);
+    doc.save(`Boleta_${venta.id_venta}.pdf`);
   };
-
-  if (!boleta) {
-    return (
-      <div className="boleta-container">
-        <h2>Cargando boleta...</h2>
-      </div>
-    );
-  }
 
   return (
     <div className="boleta-container">
       <h1>✅ Compra Exitosa</h1>
-      <p className="boleta-numero">Pago N° {boleta.id}</p>
-      <p className="boleta-fecha">Fecha: {boleta.fecha}</p>
+      <p className="boleta-numero">Boleta N° {venta.id_venta}</p>
 
       <h2>Datos del Cliente</h2>
-      <p><strong>Nombre:</strong> {boleta.usuario.nombre}</p>
-      <p><strong>Correo:</strong> {boleta.usuario.correo}</p>
-      <p><strong>Teléfono:</strong> {boleta.usuario.telefono}</p>
+      <p><strong>Nombre:</strong> {venta.nombre_cliente}</p>
+      <p><strong>Correo:</strong> {venta.correo}</p>
+      <p><strong>Teléfono:</strong> {venta.telefono}</p>
 
       <h2>Dirección de Entrega</h2>
-      <p><strong>Calle:</strong> {boleta.direccion.calle}</p>
-      {boleta.direccion.departamento && <p><strong>Depto/N°:</strong> {boleta.direccion.departamento}</p>}
-      <p><strong>Comuna:</strong> {boleta.direccion.comuna}</p>
-      <p><strong>Región:</strong> {boleta.direccion.region}</p>
-      {boleta.direccion.indicaciones && (
-        <p><strong>Indicaciones: </strong><em>{boleta.direccion.indicaciones}</em></p>
-      )}
+      <p><strong>Calle:</strong> {venta.calle}</p>
+      {venta.departamento && <p><strong>Depto/N°:</strong> {venta.departamento}</p>}
+      <p><strong>Comuna:</strong> {venta.comuna}</p>
+      <p><strong>Región:</strong> {venta.region}</p>
+      {venta.indicaciones && <p><strong>Indicaciones:</strong> {venta.indicaciones}</p>}
 
-      <h2>Productos</h2>
+      <h2>Productos Comprados</h2>
       <table className="boleta-tabla">
         <thead>
           <tr>
             <th>Producto</th>
             <th>Precio</th>
-            <th>Cantidad</th>
+            <th>Cant.</th>
             <th>Subtotal</th>
           </tr>
         </thead>
         <tbody>
-          {boleta.productos.map((p, i) => (
-            <tr key={i}>
-              <td>{p.nombre}</td>
-              <td>${p.precio.toLocaleString()}</td>
-              <td>{p.cantidadCarrito}</td>
-              <td>${(p.precio * p.cantidadCarrito).toLocaleString()}</td>
-            </tr>
-          ))}
+          {detalles.map((det, i) => {
+            const prod = productosMap[det.id_producto];
+            const precio = prod?.precio || 0;
+            const subtotal = precio * det.cantidad;
+            return (
+              <tr key={i}>
+                <td>{prod?.nombre || "Producto desconocido"}</td>
+                <td>${precio.toLocaleString()}</td>
+                <td>{det.cantidad}</td>
+                <td>${subtotal.toLocaleString()}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
-      <h3>Total: ${boleta.total.toLocaleString()}</h3>
+      <h3>Total: ${venta.total.toLocaleString()}</h3>
 
       <p className="boleta-msg-exitosa">
         🎉 Se ha realizado la compra correctamente. ¡Gracias por tu compra!

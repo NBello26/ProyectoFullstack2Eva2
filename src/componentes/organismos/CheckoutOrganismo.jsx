@@ -16,7 +16,6 @@ const CheckoutOrganismo = () => {
   const [telefono, setTelefono] = useState("");
   const navigate = useNavigate();
 
-  // 🧩 Carga inicial de usuario y carrito
   useEffect(() => {
     const usuario = JSON.parse(localStorage.getItem("usuarioActivo"));
     if (!usuario) {
@@ -27,68 +26,97 @@ const CheckoutOrganismo = () => {
     setUsuarioActivo(usuario);
     setCarrito(usuario.carrito || []);
 
-    // precarga de datos del usuario
     setNombre(usuario.nombre || "");
     setCorreo(usuario.correo || "");
     setTelefono(usuario.telefono || "");
   }, [navigate]);
 
-  // 🧮 Total del carrito
   const total = carrito.reduce(
     (sum, producto) => sum + producto.precio * (producto.cantidadCarrito || 1),
     0
   );
 
-  // 🧾 Genera una boleta con estado (exitosa/fallida)
-  const generarBoleta = (estado) => {
-    return {
-      id: Date.now(),
-      fecha: new Date().toLocaleString(),
-      estado,
-      usuario: { nombre, correo, telefono },
-      direccion: { calle, departamento, region, comuna, indicaciones },
-      productos: carrito,
-      total,
-    };
-  };
-
-  // ✅ Compra exitosa
-  const pagarAhora = () => {
+  // =============================================================
+  // 🟢 COMPRA EXITOSA → Guardar Venta + Detalles en el Backend
+  // =============================================================
+  const pagarAhora = async () => {
     if (carrito.length === 0) {
       alert("Tu carrito está vacío.");
       return;
     }
 
-    const boleta = generarBoleta("exitosa");
+    try {
+      // 1️⃣ Crear venta en backend
+      const ventaBody = {
+        id_cliente: usuarioActivo.id,
+        total,
+        nombre_cliente: nombre,
+        correo,
+        telefono,
+        calle,
+        departamento,
+        region,
+        comuna,
+        indicaciones,
+      };
 
-    // Actualizar usuario con historial y carrito vacío
-    const usuarioActualizado = {
-      ...usuarioActivo,
-      carrito: [],
-      historialCompra: [...(usuarioActivo.historialCompra || []), boleta],
-    };
+      const ventaRes = await fetch("http://localhost:3000/api/ventas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(ventaBody),
+      });
 
-    // Guardar usuario activo y en lista de usuarios
-    localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActualizado));
-    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const index = usuarios.findIndex((u) => u.id === usuarioActivo.id);
-    if (index !== -1) usuarios[index] = usuarioActualizado;
-    else usuarios.push(usuarioActualizado);
-    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+      const ventaCreada = await ventaRes.json();
+      const idVenta = ventaCreada.id_venta;
 
-    // Limpiar carrito visualmente
-    setCarrito([]);
-    window.dispatchEvent(new Event("storage"));
+      // 2️⃣ Crear detalle_venta por cada producto
+      for (const item of carrito) {
+        const detalleBody = {
+          id_venta: idVenta,
+          id_producto: item.id,
+          cantidad: item.cantidadCarrito,
+          total_producto: item.precio * item.cantidadCarrito,
+        };
 
-    // 🔹 Redirigir a página de boleta exitosa
-    navigate(`/boleta-exitosa/${boleta.id}`, { state: { boleta } });
+        await fetch("http://localhost:3000/api/detalle-venta", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(detalleBody),
+        });
+      }
+
+      // 3️⃣ Vaciar carrito local
+      const usuarioActualizado = { ...usuarioActivo, carrito: [] };
+      localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActualizado));
+
+      const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+      const index = usuarios.findIndex((u) => u.id === usuarioActivo.id);
+      if (index !== -1) usuarios[index] = usuarioActualizado;
+      localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+      setCarrito([]);
+      window.dispatchEvent(new Event("storage"));
+
+      // 4️⃣ Redirigir a boleta exitosa
+      navigate(`/boleta-exitosa/${idVenta}`, {
+        state: {
+          idVenta,
+          total,
+          productos: carrito,
+          cliente: ventaBody,
+        },
+      });
+    } catch (error) {
+      console.error("Error al procesar compra:", error);
+      alert("Error al procesar el pago.");
+    }
   };
 
-  // ❌ Compra fallida (no guarda ni vacía carrito)
+  // =============================================================
+  // 🔴 COMPRA FALLIDA → NO HACE NADA, SOLO REDIRIGE
+  // =============================================================
   const compraFallida = () => {
-    const boleta = generarBoleta("fallida");
-    // 🔹 Redirigir a página de boleta fallida
-    navigate(`/boleta-fallida/${boleta.id}`, { state: { boleta } });
+    navigate("/boleta-fallida");
   };
 
   return (
@@ -98,6 +126,7 @@ const CheckoutOrganismo = () => {
       {/* 🛒 Carrito */}
       <div className="checkout-carrito">
         <h2>Productos</h2>
+
         {carrito.length === 0 ? (
           <p>No hay productos en tu carrito.</p>
         ) : (
@@ -122,23 +151,26 @@ const CheckoutOrganismo = () => {
             </tbody>
           </table>
         )}
+
         <div className="checkout-total">Total: ${total.toLocaleString()}</div>
       </div>
 
-      {/* 👤 Datos del cliente */}
+      {/* Cliente */}
       <div className="checkout-cliente">
         <h2>Datos del Cliente</h2>
         <div className="input-row">
           <label>Nombre</label>
           <input value={nombre} onChange={(e) => setNombre(e.target.value)} />
+
           <label>Correo</label>
           <input value={correo} onChange={(e) => setCorreo(e.target.value)} />
+
           <label>Teléfono</label>
           <input value={telefono} onChange={(e) => setTelefono(e.target.value)} />
         </div>
       </div>
 
-      {/* 📦 Dirección */}
+      {/* Dirección */}
       <div className="checkout-direccion">
         <h2>Dirección de Entrega</h2>
         <div className="input-row">
@@ -147,14 +179,13 @@ const CheckoutOrganismo = () => {
             type="text"
             value={calle}
             onChange={(e) => setCalle(e.target.value)}
-            placeholder="Calle"
           />
+
           <label>Departamento</label>
           <input
             type="text"
             value={departamento}
             onChange={(e) => setDepartamento(e.target.value)}
-            placeholder="Depto / N°"
           />
         </div>
 
@@ -169,11 +200,10 @@ const CheckoutOrganismo = () => {
         <textarea
           value={indicaciones}
           onChange={(e) => setIndicaciones(e.target.value)}
-          placeholder="Indicaciones para la entrega"
         />
       </div>
 
-      {/* 🔘 Botones */}
+      {/* Botones */}
       <div className="checkout-buttons">
         <button
           className="checkout-btn volver-btn"
@@ -181,9 +211,11 @@ const CheckoutOrganismo = () => {
         >
           Volver al Carrito
         </button>
+
         <button className="checkout-btn pagar-btn" onClick={pagarAhora}>
           Pagar Ahora
         </button>
+
         <button className="checkout-btn cancelar-btn" onClick={compraFallida}>
           Compra Fallida
         </button>

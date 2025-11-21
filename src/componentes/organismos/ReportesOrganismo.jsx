@@ -7,18 +7,44 @@ const ReportesOrganismo = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [productos, setProductos] = useState([]);
   const [boletas, setBoletas] = useState([]);
+  const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const listaUsuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const listaProductos = JSON.parse(localStorage.getItem("productos")) || [];
-    const todasBoletas = listaUsuarios.flatMap(u => u.historialCompra || []);
+    const cargarDatos = async () => {
+      try {
+        // 🔹 Traer usuarios
+        const resUsuarios = await fetch("http://localhost:3000/api/usuarios");
+        if (!resUsuarios.ok) throw new Error("No se pudieron obtener los usuarios");
+        const usuariosBD = await resUsuarios.json();
 
-    setUsuarios(listaUsuarios);
-    setProductos(listaProductos);
-    setBoletas(todasBoletas);
+        // 🔹 Traer productos
+        const resProductos = await fetch("http://localhost:3000/api/productos");
+        if (!resProductos.ok) throw new Error("No se pudieron obtener los productos");
+        const productosBD = await resProductos.json();
+
+        // 🔹 Traer ventas/boletas
+        const resBoletas = await fetch("http://localhost:3000/api/ventas");
+        if (!resBoletas.ok) throw new Error("No se pudieron obtener las boletas");
+        const boletasBD = await resBoletas.json();
+
+        setUsuarios(usuariosBD);
+        setProductos(productosBD);
+        setBoletas(boletasBD);
+        setCargando(false);
+      } catch (err) {
+        console.error(err);
+        alert("Error cargando los reportes");
+        setCargando(false);
+      }
+    };
+
+    cargarDatos();
   }, []);
 
+  if (cargando) return <p className="reportesOrganismo-wrapper">Cargando reportes...</p>;
+
+  // Total de productos (sumando la cantidad de stock si existe, sino 0)
   const totalProductos = productos.reduce((sum, p) => sum + (p.cantidad || 0), 0);
 
   return (

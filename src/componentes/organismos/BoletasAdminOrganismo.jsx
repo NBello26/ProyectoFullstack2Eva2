@@ -1,35 +1,39 @@
-// 🧱 Organismo: BoletasAdminOrganismo
-// Muestra todas las boletas de todos los usuarios en una tabla compacta
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../estilos/boletasAdminPage.css";
 
 const BoletasAdminOrganismo = () => {
-  const [usuarios, setUsuarios] = useState([]);
+  const [boletas, setBoletas] = useState([]);
+  const [cargando, setCargando] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const listaUsuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    setUsuarios(listaUsuarios);
+    const cargarBoletas = async () => {
+      try {
+        // 🔹 Traer todas las ventas desde la BD
+        const res = await fetch("http://localhost:3000/api/ventas");
+        if (!res.ok) throw new Error("No se pudieron obtener las boletas");
+        const ventas = await res.json();
+        setBoletas(ventas);
+        setCargando(false);
+      } catch (err) {
+        console.error(err);
+        alert("Error cargando las boletas");
+        setCargando(false);
+      }
+    };
+
+    cargarBoletas();
   }, []);
 
-  // Obtener todas las boletas de todos los usuarios
-  const todasBoletas = usuarios.flatMap(usuario =>
-    (usuario.historialCompra || []).map(boleta => ({
-      ...boleta,
-      nombreUsuario: usuario.nombre
-    }))
-  );
-
-  if (todasBoletas.length === 0) {
-    return <p className="boletasAdminOrganismo-mensaje">No hay boletas registradas.</p>;
-  }
+  if (cargando) return <p className="boletasAdminOrganismo-mensaje">Cargando boletas...</p>;
+  if (boletas.length === 0) return <p className="boletasAdminOrganismo-mensaje">No hay boletas registradas.</p>;
 
   return (
     <div className="boletasAdminOrganismo-wrapper">
       <div className="boletasAdminOrganismo-container">
         <h1 className="boletasAdminOrganismo-titulo">Boletas de todos los usuarios</h1>
+
         <table className="boletasAdminOrganismo-tabla">
           <thead>
             <tr>
@@ -37,22 +41,20 @@ const BoletasAdminOrganismo = () => {
               <th>Usuario</th>
               <th>Fecha</th>
               <th>Total</th>
-              <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {todasBoletas.map(boleta => (
-              <tr key={boleta.id}>
-                <td>{boleta.id}</td>
-                <td>{boleta.nombreUsuario}</td>
-                <td>{boleta.fecha}</td>
+            {boletas.map((boleta) => (
+              <tr key={boleta.id_venta}>
+                <td>{boleta.id_venta}</td>
+                <td>{boleta.nombre_cliente}</td>
+                <td>{new Date(boleta.createdAt).toLocaleString()}</td>
                 <td>${boleta.total.toLocaleString()}</td>
-                <td>{boleta.estado}</td>
                 <td>
                   <button
                     className="boletasAdminOrganismo-btnVer"
-                    onClick={() => navigate(`/detalleBoleta/${boleta.id}`, { state: { boleta } })}
+                    onClick={() => navigate(`/detalleBoleta/${boleta.id_venta}`)}
                   >
                     Ver Boleta
                   </button>

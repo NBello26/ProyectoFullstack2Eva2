@@ -1,55 +1,70 @@
-// 🧱 Organismo: DetalleBoletaAdminOrganismo
-// Muestra los detalles de una boleta específica (solo lectura)
 import React, { useEffect, useState } from "react";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../../estilos/detalleBoletaAdminOrganismo.css";
 
 const DetalleBoletaAdminOrganismo = () => {
-  const { id } = useParams();
-  const location = useLocation();
+  const { id } = useParams(); // id_venta
   const navigate = useNavigate();
-  const [boleta, setBoleta] = useState(null);
+  const [venta, setVenta] = useState(null);
+  const [detalles, setDetalles] = useState([]);
+  const [productosMap, setProductosMap] = useState({});
+  const [cargando, setCargando] = useState(true);
 
   useEffect(() => {
-    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+    const cargarBoleta = async () => {
+      try {
+        // 🔹 Traer venta
+        const ventaRes = await fetch(`http://localhost:3000/api/ventas/${id}`);
+        if (!ventaRes.ok) throw new Error("No se pudo obtener la venta");
+        const ventaBD = await ventaRes.json();
 
-    // Buscar la boleta por id en todos los usuarios
-    const todasBoletas = usuarios.flatMap(usuario =>
-      (usuario.historialCompra || []).map(b => ({ ...b, nombreUsuario: usuario.nombre }))
-    );
+        // 🔹 Traer detalles de la venta
+        const detRes = await fetch(`http://localhost:3000/api/detalle-venta/venta/${id}`);
+        if (!detRes.ok) throw new Error("No se pudieron obtener los detalles");
+        const detallesBD = await detRes.json();
 
-    const encontrada = todasBoletas.find(b => b.id.toString() === id) || location.state?.boleta;
-    if (!encontrada) {
-      alert("Boleta no encontrada");
-      navigate("/listboletas");
-      return;
-    }
+        // 🔹 Traer todos los productos
+        const prodRes = await fetch("http://localhost:3000/api/productos");
+        if (!prodRes.ok) throw new Error("No se pudieron obtener los productos");
+        const productosBD = await prodRes.json();
 
-    setBoleta(encontrada);
-  }, [id, location.state, navigate]);
+        // 🔹 Mapear productos por id
+        const mapa = {};
+        productosBD.forEach(p => (mapa[p.id] = p));
 
-  if (!boleta) return <p className="detalleBoletaAdminOrganismo-mensaje">Cargando boleta...</p>;
+        setVenta(ventaBD);
+        setDetalles(detallesBD);
+        setProductosMap(mapa);
+        setCargando(false);
+      } catch (err) {
+        console.error(err);
+        alert("Error cargando la boleta");
+        navigate("/listusuarios");
+      }
+    };
+
+    cargarBoleta();
+  }, [id, navigate]);
+
+  if (cargando) return <p className="detalleBoletaAdminOrganismo-mensaje">Cargando boleta...</p>;
+  if (!venta) return <p className="detalleBoletaAdminOrganismo-mensaje">Boleta no encontrada</p>;
 
   return (
     <div className="detalleBoletaAdminOrganismo-container">
-      <h1 className="detalleBoletaAdminOrganismo-titulo">Boleta N° {boleta.id}</h1>
-      <p><strong>Usuario:</strong> {boleta.nombreUsuario}</p>
-      <p><strong>Fecha:</strong> {boleta.fecha}</p>
-      <p><strong>Estado:</strong> {boleta.estado}</p>
-
-      <h2>Datos del Cliente</h2>
-      <p><strong>Nombre:</strong> {boleta.usuario?.nombre || "-"}</p>
-      <p><strong>Correo:</strong> {boleta.usuario?.correo || "-"}</p>
-      <p><strong>Teléfono:</strong> {boleta.usuario?.telefono || "-"}</p>
+      <h1 className="detalleBoletaAdminOrganismo-titulo">Boleta N° {venta.id_venta}</h1>
+      <p><strong>Nombre Cliente:</strong> {venta.nombre_cliente}</p>
+      <p><strong>Correo:</strong> {venta.correo}</p>
+      <p><strong>Teléfono:</strong> {venta.telefono}</p>
+      <p><strong>Fecha:</strong> {new Date(venta.createdAt).toLocaleString()}</p>
 
       <h2>Dirección de Entrega</h2>
-      <p><strong>Calle:</strong> {boleta.direccion?.calle || "-"}</p>
-      <p><strong>Depto/N°:</strong> {boleta.direccion?.departamento || "-"}</p>
-      <p><strong>Comuna/Región:</strong> {boleta.direccion?.comuna || "-"}, {boleta.direccion?.region || "-"}</p>
-      {boleta.direccion?.indicaciones && <p><strong>Indicaciones: </strong><em>{boleta.direccion.indicaciones}</em></p>}
+      <p><strong>Calle:</strong> {venta.calle}</p>
+      <p><strong>Depto/N°:</strong> {venta.departamento || "-"}</p>
+      <p><strong>Comuna/Región:</strong> {venta.comuna}, {venta.region}</p>
+      {venta.indicaciones && <p><strong>Indicaciones:</strong> {venta.indicaciones}</p>}
 
       <h2>Productos</h2>
-      {boleta.productos?.length > 0 ? (
+      {detalles.length > 0 ? (
         <table className="detalleBoletaAdminOrganismo-tabla">
           <thead>
             <tr>
@@ -60,25 +75,30 @@ const DetalleBoletaAdminOrganismo = () => {
             </tr>
           </thead>
           <tbody>
-            {boleta.productos.map((p, i) => (
-              <tr key={i}>
-                <td>{p.nombre}</td>
-                <td>${p.precio.toLocaleString()}</td>
-                <td>{p.cantidadCarrito}</td>
-                <td>${(p.precio * p.cantidadCarrito).toLocaleString()}</td>
-              </tr>
-            ))}
+            {detalles.map((det, i) => {
+              const prod = productosMap[det.id_producto];
+              const precio = prod?.precio || 0;
+              const subtotal = precio * det.cantidad;
+              return (
+                <tr key={i}>
+                  <td>{prod?.nombre || "Producto desconocido"}</td>
+                  <td>${precio.toLocaleString()}</td>
+                  <td>{det.cantidad}</td>
+                  <td>${subtotal.toLocaleString()}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       ) : (
         <p>No hay productos en esta boleta.</p>
       )}
 
-      <h3>Total: ${boleta.total.toLocaleString()}</h3>
+      <h3>Total: ${venta.total.toLocaleString()}</h3>
 
       <button
         className="detalleBoletaAdminOrganismo-btnVolver"
-        onClick={() => navigate("/listboletas")}
+        onClick={() => navigate("/historialUsuario/" + venta.id_cliente)}
       >
         Volver
       </button>
