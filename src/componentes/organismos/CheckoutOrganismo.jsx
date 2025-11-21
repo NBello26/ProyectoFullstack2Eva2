@@ -36,9 +36,6 @@ const CheckoutOrganismo = () => {
     0
   );
 
-  // =============================================================
-  // 🟢 COMPRA EXITOSA → Guardar Venta + Detalles en el Backend
-  // =============================================================
   const pagarAhora = async () => {
     if (carrito.length === 0) {
       alert("Tu carrito está vacío.");
@@ -46,7 +43,7 @@ const CheckoutOrganismo = () => {
     }
 
     try {
-      // 1️⃣ Crear venta en backend
+      //  Crear venta en backend
       const ventaBody = {
         id_cliente: usuarioActivo.id,
         total,
@@ -69,7 +66,7 @@ const CheckoutOrganismo = () => {
       const ventaCreada = await ventaRes.json();
       const idVenta = ventaCreada.id_venta;
 
-      // 2️⃣ Crear detalle_venta por cada producto
+      //  Crear detalle_venta por cada producto
       for (const item of carrito) {
         const detalleBody = {
           id_venta: idVenta,
@@ -85,7 +82,7 @@ const CheckoutOrganismo = () => {
         });
       }
 
-      // 3️⃣ Vaciar carrito local
+      //  Vaciar carrito local
       const usuarioActualizado = { ...usuarioActivo, carrito: [] };
       localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActualizado));
 
@@ -97,7 +94,7 @@ const CheckoutOrganismo = () => {
       setCarrito([]);
       window.dispatchEvent(new Event("storage"));
 
-      // 4️⃣ Redirigir a boleta exitosa
+      //  Redirigir a boleta exitosa
       navigate(`/boleta-exitosa/${idVenta}`, {
         state: {
           idVenta,
@@ -112,9 +109,6 @@ const CheckoutOrganismo = () => {
     }
   };
 
-  // =============================================================
-  // 🔴 COMPRA FALLIDA → NO HACE NADA, SOLO REDIRIGE
-  // =============================================================
   const compraFallida = () => {
     navigate("/boleta-fallida");
   };
