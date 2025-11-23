@@ -32,13 +32,6 @@ const PerfilUsuario = () => {
           <p><strong>Comuna:</strong> {usuario.comuna}</p>
           <p><strong>Tipo de usuario:</strong> {usuario.tipusuario}</p>
         </div>
-
-        <button
-          className="perfilAdminOrganismo-btnVolver"
-          onClick={() => navigate("/paginaPrincipal")}
-        >
-          Volver
-        </button>
       </div>
     </>
   );

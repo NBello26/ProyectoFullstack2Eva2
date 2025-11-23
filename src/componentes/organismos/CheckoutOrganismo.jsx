@@ -131,14 +131,29 @@ const CheckoutOrganismo = () => {
 
   // 🟥 COMPRA FALLIDA
   const compraFallida = () => {
-    const error = validarCampos();
-    if (error) {
-      alert(error);
-      return;
-    }
+  const error = validarCampos();
+  if (error) {
+    alert(error);
+    return;
+  }
 
-    navigate("/boleta-fallida");
-  };
+  navigate("/boleta-fallida", {
+    state: {
+      usuario: {
+        nombre,
+        correo,
+        telefono,
+        direccion: {
+          calle,
+          departamento,
+          comuna,
+          region
+        }
+      },
+      productos: carrito
+    }
+  });
+};
 
   return (
     <div className="checkout-container">
