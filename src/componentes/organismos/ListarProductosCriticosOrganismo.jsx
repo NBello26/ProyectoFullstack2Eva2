@@ -1,10 +1,12 @@
-// 🧱 Organismo: ListarProductosCriticosOrganismo
-// Muestra los productos con stock menor a 5 en una tabla simple
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // 🔹 Importar useNavigate
 import "../../estilos/listarProductosCriticosPage.css";
+
 const API_URL = process.env.REACT_APP_API_URL;
+
 const ListarProductosCriticosOrganismo = () => {
   const [productosCriticos, setProductosCriticos] = useState([]);
+  const navigate = useNavigate(); // 🔹 Inicializar navigate
 
   useEffect(() => {
     const cargarProductos = async () => {
@@ -68,7 +70,7 @@ const ListarProductosCriticosOrganismo = () => {
 
       <button
         className="listarCriticosOrganismo-btnVolver"
-        onClick={() => navigate("/listproductos")}
+        onClick={() => navigate("/listproductos")} // ✅ Ahora sí funciona
       >
         Volver
       </button>
