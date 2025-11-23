@@ -69,7 +69,7 @@ const ListarProductosCriticosOrganismo = () => {
       )}
 
       <button>
-        <Link to="/listproductos" className="listarCriticosOrganismo-btnVolver">
+        <Link to="/listproductos" className="btn-back">
           Volver
         </Link>
       </button>
