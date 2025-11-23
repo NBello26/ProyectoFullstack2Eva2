@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "../../estilos/reportesOrganismo.css";
 
 const API_URL = process.env.REACT_APP_API_URL;
+
 const ReportesOrganismo = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -48,11 +49,15 @@ const ReportesOrganismo = () => {
   // Total de productos (sumando la cantidad de stock si existe, sino 0)
   const totalProductos = productos.reduce((sum, p) => sum + (p.cantidad || 0), 0);
 
+  // Total recaudado sumando el total de cada boleta
+  const totalRecaudado = boletas.reduce((sum, b) => sum + (b.total || 0), 0);
+
   return (
     <div className="reportesOrganismo-wrapper">
       <div className="reportesOrganismo-container">
         <CardReporte
           titulo={`Compras (${boletas.length})`}
+          subtitulo={`Recaudado: $${totalRecaudado.toLocaleString()}`}
           enlace="/listboletas"
           color="#3498db"
           emoji="🎉"
