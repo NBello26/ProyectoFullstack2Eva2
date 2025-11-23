@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import HeaderLogged from "../header/HeaderLogged"; 
 import "../../estilos/perfilAdminPage.css";
-import Footer from "../footer/Footer";
+
 
 const PerfilUsuario = () => {
   const navigate = useNavigate();
@@ -22,7 +21,6 @@ const PerfilUsuario = () => {
 
   return (
     <>
-      <HeaderLogged />
       <div className="perfilAdminOrganismo-container">
         <h1 className="perfilAdminOrganismo-titulo">Perfil de {usuario.nombre}</h1>
 
@@ -42,7 +40,6 @@ const PerfilUsuario = () => {
           Volver
         </button>
       </div>
-      <Footer />
     </>
   );
 };
