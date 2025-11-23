@@ -68,7 +68,7 @@ const ListarProductosCriticosOrganismo = () => {
 
       <button
         className="listarCriticosOrganismo-btnVolver"
-        onClick={() => (window.location.href = "/listproductos")}
+        onClick={() => navigate("/listproductos")}
       >
         Volver
       </button>

@@ -4,14 +4,17 @@
   color: white;
   padding: 1em;
   width: 100%;
-  position: relative; /* o fixed si quieres que quede pegado al top */
-  top: 0;
-  left: 0;
-
+  box-sizing: border-box; /* Incluye padding dentro del width */
+  margin: 0; /* Evita márgenes externos */
+  
   display: flex;
   justify-content: space-between; /* separa Titulo y botón */
   align-items: center;
-  text-align: left; /* quitar center para que no afecte otros headers */
+  
+  position: relative; /* o fixed si quieres que quede pegado al top */
+  top: 0;
+  left: 0;
+  overflow-x: hidden; /* previene scroll horizontal */
 }
 
 .admin-header .admin-logout-btn {
@@ -29,4 +32,11 @@
 
 .admin-header .admin-logout-btn:hover {
   background-color: #c0392b;
+}
+
+/* Opcional: asegurar que body no tenga margen extra */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* previene scroll horizontal en todo el body */
 }
