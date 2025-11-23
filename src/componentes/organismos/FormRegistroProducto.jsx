@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const FormRegistroProducto = () => {
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
@@ -47,7 +47,7 @@ const FormRegistroProducto = () => {
     };
 
     try {
-      const respuesta = await fetch("http://localhost:3000/api/productos", {
+      const respuesta = await fetch(`${API_URL}/api/productos`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

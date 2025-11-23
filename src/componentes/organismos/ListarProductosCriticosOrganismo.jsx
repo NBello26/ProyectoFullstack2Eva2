@@ -2,14 +2,14 @@
 // Muestra los productos con stock menor a 5 en una tabla simple
 import React, { useEffect, useState } from "react";
 import "../../estilos/listarProductosCriticosPage.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const ListarProductosCriticosOrganismo = () => {
   const [productosCriticos, setProductosCriticos] = useState([]);
 
   useEffect(() => {
     const cargarProductos = async () => {
       try {
-        const respuesta = await fetch("http://localhost:3000/api/productos");
+        const respuesta = await fetch(`${API_URL}/api/productos`);
 
         if (!respuesta.ok) {
           console.error("Error al obtener productos");

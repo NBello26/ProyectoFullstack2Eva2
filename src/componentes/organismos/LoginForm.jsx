@@ -11,6 +11,7 @@ import Titulo from "../atomos/Titulo";
 
 // ✔ mantenemos usuarioActivo para carrito y sesión
 import { iniciarSesion } from "../../data/usuarioActivo";
+
 const API_URL = process.env.REACT_APP_API_URL;
 const LoginForm = () => {
   const [correo, setCorreo] = useState("");

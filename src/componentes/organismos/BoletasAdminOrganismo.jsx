@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../estilos/boletasAdminPage.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const BoletasAdminOrganismo = () => {
   const [boletas, setBoletas] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -11,7 +11,7 @@ const BoletasAdminOrganismo = () => {
     const cargarBoletas = async () => {
       try {
         // 🔹 Traer todas las ventas desde la BD
-        const res = await fetch("http://localhost:3000/api/ventas");
+        const res = await fetch(`${API_URL}/api/ventas`);
         if (!res.ok) throw new Error("No se pudieron obtener las boletas");
         const ventas = await res.json();
         setBoletas(ventas);

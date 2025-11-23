@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ProductoTienda from "../moleculas/ProductoTienda";
 import "../../estilos/tiendaProductos.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const ProductosTienda = () => {
   const [productos, setProductos] = useState([]);
 
@@ -9,7 +9,7 @@ const ProductosTienda = () => {
     // Traer productos desde la BD
     const fetchProductos = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/productos");
+        const res = await fetch(`${API_URL}/api/productos`);
         if (!res.ok) throw new Error("Error al obtener productos");
         const data = await res.json();
         setProductos(data);

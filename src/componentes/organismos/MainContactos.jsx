@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const MainContactos = () => {
   const [contactos, setContactos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -7,7 +7,7 @@ const MainContactos = () => {
   useEffect(() => {
     const fetchContactos = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/contacto");
+        const res = await fetch(`${API_URL}/api/contacto`);
         if (!res.ok) throw new Error("Error al obtener los contactos");
         const data = await res.json();
         setContactos(data);

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Boton from "../atomos/Boton.jsx";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const FormEditarProducto = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const FormEditarProducto = () => {
 
     const fetchProducto = async () => {
       try {
-        const resp = await fetch(`http://localhost:3000/api/productos/${productoId}`);
+        const resp = await fetch(`${API_URL}/api/productos/${productoId}`);
         if (!resp.ok) throw new Error("No se pudo obtener el producto");
 
         const data = await resp.json();
@@ -78,7 +78,7 @@ const FormEditarProducto = () => {
     };
 
     try {
-      const resp = await fetch(`http://localhost:3000/api/productos/${productoId}`, {
+      const resp = await fetch(`${API_URL}/api/productos/${productoId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(productoActualizado),

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Boton from "../atomos/Boton"; // ✅ reutilizamos átomo
 import "../../estilos/contacto.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const ContactoForm = () => {
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
@@ -39,7 +39,7 @@ const ContactoForm = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:3000/api/contacto", {
+      const res = await fetch(`${API_URL}/api/contacto`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(contacto),

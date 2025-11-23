@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../estilos/headerLogged.css";
 import "../../estilos/header.css";
 import { ContadorCarrito } from "../atomos/ContadorCarrito";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const HeaderLogged = () => {
   const navigate = useNavigate();
 
@@ -13,12 +13,12 @@ const HeaderLogged = () => {
     try {
       for (const item of usuarioActivo.carrito) {
         // Obtener el producto actual desde la BD
-        const resProducto = await fetch(`http://localhost:3000/api/productos/${item.id}`);
+        const resProducto = await fetch(`${API_URL}/api/productos/${item.id}`);
         if (!resProducto.ok) throw new Error("Producto no encontrado");
         const productoActual = await resProducto.json();
 
         // Devolver al stock solo la cantidad que estaba en el carrito
-        await fetch(`http://localhost:3000/api/productos/${item.id}`, {
+        await fetch(`${API_URL}/api/productos/${item.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

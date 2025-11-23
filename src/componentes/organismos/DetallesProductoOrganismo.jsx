@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const DetallesProductoOrganismo = () => {
   const { id } = useParams(); // ID del producto desde la ruta
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const DetallesProductoOrganismo = () => {
     // Obtener producto desde la BD por ID
     const fetchProducto = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/productos/${id}`);
+        const res = await fetch(`${API_URL}/api/productos/${id}`);
         if (!res.ok) throw new Error("Producto no encontrado");
         const data = await res.json();
         setProducto(data);
@@ -54,7 +54,7 @@ const DetallesProductoOrganismo = () => {
 
     // Actualizar stock en la BD
     try {
-      const res = await fetch(`http://localhost:3000/api/productos/${producto.id}`, {
+      const res = await fetch(`${API_URL}/api/productos/${producto.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...producto, cantidad: producto.cantidad - 1 }),

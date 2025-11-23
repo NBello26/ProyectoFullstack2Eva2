@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ProductoCardDetalle from "../moleculas/ProductoCardDetalle.jsx"; // card compartida
 import "../../estilos/paginasProductos.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const ProductosPorCategoria = () => {
   const [categoria, setCategoria] = useState("Snacks");
   const [productos, setProductos] = useState([]);
@@ -11,7 +11,7 @@ const ProductosPorCategoria = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/productos");
+        const res = await fetch(`${API_URL}/api/productos`);
         if (!res.ok) throw new Error("Error al obtener productos");
         const data = await res.json();
         setTodosProductos(data);

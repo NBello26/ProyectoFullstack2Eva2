@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import Boton from "../atomos/Boton.jsx";
 import SelectRegionComuna from "../moleculas/SelectRegionComuna.jsx";
 import "../../estilos/formRegistroAdmin.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const FormRegistroUsuario = () => {
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
@@ -53,7 +53,7 @@ const FormRegistroUsuario = () => {
 
     try {
       // 1️⃣ Verificar si el correo ya existe consultando al backend
-      const checkResp = await fetch("http://localhost:3000/api/usuarios");
+      const checkResp = await fetch(`${API_URL}/api/usuarios`);
       const listaUsuarios = await checkResp.json();
 
       const existe = listaUsuarios.some((u) => u.correo === correo);
@@ -73,7 +73,7 @@ const FormRegistroUsuario = () => {
         tipusuario,
       };
 
-      const response = await fetch("http://localhost:3000/api/usuarios", {
+      const response = await fetch(`${API_URL}/api/usuarios`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoUsuario),

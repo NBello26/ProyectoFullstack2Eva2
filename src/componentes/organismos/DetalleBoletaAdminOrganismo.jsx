@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../../estilos/detalleBoletaAdminOrganismo.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const DetalleBoletaAdminOrganismo = () => {
   const { id } = useParams(); // id_venta
   const navigate = useNavigate();
@@ -14,17 +14,17 @@ const DetalleBoletaAdminOrganismo = () => {
     const cargarBoleta = async () => {
       try {
         // 🔹 Traer venta
-        const ventaRes = await fetch(`http://localhost:3000/api/ventas/${id}`);
+        const ventaRes = await fetch(`${API_URL}/api/ventas/${id}`);
         if (!ventaRes.ok) throw new Error("No se pudo obtener la venta");
         const ventaBD = await ventaRes.json();
 
         // 🔹 Traer detalles de la venta
-        const detRes = await fetch(`http://localhost:3000/api/detalle-venta/venta/${id}`);
+        const detRes = await fetch(`${API_URL}/api/detalle-venta/venta/${id}`);
         if (!detRes.ok) throw new Error("No se pudieron obtener los detalles");
         const detallesBD = await detRes.json();
 
         // 🔹 Traer todos los productos
-        const prodRes = await fetch("http://localhost:3000/api/productos");
+        const prodRes = await fetch(`${API_URL}/api/productos`);
         if (!prodRes.ok) throw new Error("No se pudieron obtener los productos");
         const productosBD = await prodRes.json();
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Boton from "../atomos/Boton.jsx";
 import SelectRegionComuna from "../moleculas/SelectRegionComuna.jsx";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const FormEditarUsuario = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ const FormEditarUsuario = () => {
 
     const fetchUsuario = async () => {
       try {
-        const resp = await fetch(`http://localhost:3000/api/usuarios/${usuarioId}`);
+        const resp = await fetch(`${API_URL}/api/usuarios/${usuarioId}`);
         if (!resp.ok) throw new Error("No se pudo obtener el usuario");
 
         const usuario = await resp.json();
@@ -65,7 +65,7 @@ const FormEditarUsuario = () => {
     };
 
     try {
-      const resp = await fetch(`http://localhost:3000/api/usuarios/${usuarioId}`, {
+      const resp = await fetch(`${API_URL}/api/usuarios/${usuarioId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(usuarioActualizado),

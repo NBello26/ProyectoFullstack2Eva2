@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import CarritoItem from "../moleculas/CarritoItem";
 import CarritoButton from "../atomos/CarritoButton";
 import "../../estilos/carrito.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const CarritoOrganismo = () => {
   const [carrito, setCarrito] = useState([]);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
@@ -40,12 +40,12 @@ const CarritoOrganismo = () => {
   const devolverStock = async (producto, cantidad) => {
     try {
       // Obtener el producto actual desde la BD
-      const res = await fetch(`http://localhost:3000/api/productos/${producto.id}`);
+      const res = await fetch(`${API_URL}/api/productos/${producto.id}`);
       if (!res.ok) throw new Error("Producto no encontrado");
       const productoBD = await res.json();
 
       // Actualizar stock sumando la cantidad devuelta
-      await fetch(`http://localhost:3000/api/productos/${producto.id}`, {
+      await fetch(`${API_URL}/api/productos/${producto.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...productoBD, cantidad: productoBD.cantidad + cantidad }),

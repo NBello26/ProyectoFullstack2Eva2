@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SelectRegionComunaCheckout from "../moleculas/SelectRegionComuna";
 import "../../estilos/checkoutPage.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const CheckoutOrganismo = () => {
   const [carrito, setCarrito] = useState([]);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
@@ -57,7 +57,7 @@ const CheckoutOrganismo = () => {
         indicaciones,
       };
 
-      const ventaRes = await fetch("http://localhost:3000/api/ventas", {
+      const ventaRes = await fetch(`${API_URL}/api/ventas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(ventaBody),
@@ -75,7 +75,7 @@ const CheckoutOrganismo = () => {
           total_producto: item.precio * item.cantidadCarrito,
         };
 
-        await fetch("http://localhost:3000/api/detalle-venta", {
+        await fetch(`${API_URL}/api/detalle-venta`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(detalleBody),

@@ -5,7 +5,7 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../moleculas/ProductCard";
 import "../../estilos/pagPrincipal.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const ProductosDestacados = () => {
   const [productos, setProductos] = useState([]);
   const [cargando, setCargando] = useState(true);
@@ -14,7 +14,7 @@ const ProductosDestacados = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/productos");
+        const response = await fetch(`${API_URL}/api/productos`);
 
         if (!response.ok) {
           throw new Error("Error al obtener los productos");

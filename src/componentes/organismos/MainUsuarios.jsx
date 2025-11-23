@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import TablaUsuarios from "../moleculas/TablaUsuarios.jsx";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const MainUsuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
 
   useEffect(() => {
     const fetchUsuarios = async () => {
       try {
-        const resp = await fetch("http://localhost:3000/api/usuarios");
+        const resp = await fetch(`${API_URL}/api/usuarios`);
         if (!resp.ok) throw new Error("Error al obtener usuarios");
 
         const data = await resp.json();

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import TablaProductos from "../moleculas/TablaProductos.jsx";
 import "../../estilos/mainProductosPage.css";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const MainProductos = () => {
   const [productos, setProductos] = useState([]);
 
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const resp = await fetch("http://localhost:3000/api/productos");
+        const resp = await fetch(`${API_URL}/api/productos`);
         if (!resp.ok) throw new Error("Error al obtener productos");
 
         const data = await resp.json();
