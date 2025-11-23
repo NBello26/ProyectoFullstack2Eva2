@@ -57,11 +57,13 @@ const ReportesOrganismo = () => {
       <div className="reportesOrganismo-container">
         <CardReporte
           titulo={`Compras (${boletas.length})`}
-          subtitulo={`Recaudado: $${totalRecaudado.toLocaleString()}`}
+          subtitulo={`💰 Recaudado: $${totalRecaudado.toLocaleString()}`}
+          subtituloClass="total-recaudado"
           enlace="/listboletas"
           color="#3498db"
           emoji="🎉"
         />
+
         <CardReporte
           titulo={`Productos (${totalProductos})`}
           enlace="/listproductos"
