@@ -52,6 +52,7 @@ const HeaderLogged = () => {
               <li><Link to="/nosotros">Nosotros</Link></li>
               <li><Link to="/blogs">Blogs</Link></li>
               <li><Link to="/contacto">Contacto</Link></li>
+              <li><Link to="/perfilAdmin">Perfil</Link></li>
             </ul>
           </nav>
         </div>
