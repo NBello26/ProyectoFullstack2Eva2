@@ -1,13 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../estilos/boletaPage.css";
 
 const BoletaFallidaOrganismo = () => {
   const navigate = useNavigate();
-  const usuarioActivo = JSON.parse(localStorage.getItem("usuarioActivo")) || {};
-  const productos = usuarioActivo.carrito || [];
+  const [usuarioActivo, setUsuarioActivo] = useState(null);
+  const [productos, setProductos] = useState([]);
 
-  // Ajustamos la "dirección" según tus datos
+  useEffect(() => {
+    const usuario = JSON.parse(localStorage.getItem("usuarioActivo"));
+    if (!usuario) {
+      alert("No hay usuario logeado");
+      navigate("/paginaPrincipal");
+      return;
+    }
+    setUsuarioActivo(usuario);
+    setProductos(usuario.carrito || []);
+  }, [navigate]);
+
+  if (!usuarioActivo) {
+    return <h2 className="boleta-container">Cargando datos del usuario...</h2>;
+  }
+
   const direccion = {
     calle: usuarioActivo.calle || "No disponible",
     departamento: usuarioActivo.departamento || "No disponible",
@@ -26,9 +40,9 @@ const BoletaFallidaOrganismo = () => {
       <p>⚠️ No se ha podido realizar el pago. Intenta nuevamente más tarde.</p>
 
       <h2>Datos del Cliente</h2>
-      <p><strong>Nombre:</strong> {usuarioActivo.nombre || "No disponible"}</p>
-      <p><strong>Correo:</strong> {usuarioActivo.correo || "No disponible"}</p>
-      <p><strong>Teléfono:</strong> {usuarioActivo.telefono || "No disponible"}</p>
+      <p><strong>Nombre:</strong> {usuarioActivo.nombre}</p>
+      <p><strong>Correo:</strong> {usuarioActivo.correo}</p>
+      <p><strong>Teléfono:</strong> {usuarioActivo.telefono}</p>
 
       <h2>Dirección de Entrega</h2>
       <p><strong>Calle:</strong> {direccion.calle}</p>
