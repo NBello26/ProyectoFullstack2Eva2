@@ -3,6 +3,7 @@ import CardReporte from "../moleculas/CardReporte";
 import { useNavigate } from "react-router-dom";
 import "../../estilos/reportesOrganismo.css";
 
+const API_URL = process.env.REACT_APP_API_URL;
 const ReportesOrganismo = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [productos, setProductos] = useState([]);
@@ -14,17 +15,17 @@ const ReportesOrganismo = () => {
     const cargarDatos = async () => {
       try {
         // 🔹 Traer usuarios
-        const resUsuarios = await fetch("http://localhost:3000/api/usuarios");
+        const resUsuarios = await fetch(`${API_URL}/api/usuarios`);
         if (!resUsuarios.ok) throw new Error("No se pudieron obtener los usuarios");
         const usuariosBD = await resUsuarios.json();
 
         // 🔹 Traer productos
-        const resProductos = await fetch("http://localhost:3000/api/productos");
+        const resProductos = await fetch(`${API_URL}/api/productos`);
         if (!resProductos.ok) throw new Error("No se pudieron obtener los productos");
         const productosBD = await resProductos.json();
 
         // 🔹 Traer ventas/boletas
-        const resBoletas = await fetch("http://localhost:3000/api/ventas");
+        const resBoletas = await fetch(`${API_URL}/api/ventas`);
         if (!resBoletas.ok) throw new Error("No se pudieron obtener las boletas");
         const boletasBD = await resBoletas.json();
 

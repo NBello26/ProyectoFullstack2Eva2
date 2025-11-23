@@ -11,7 +11,7 @@ import Titulo from "../atomos/Titulo";
 
 // ✔ mantenemos usuarioActivo para carrito y sesión
 import { iniciarSesion } from "../../data/usuarioActivo";
-
+const API_URL = process.env.REACT_APP_API_URL;
 const LoginForm = () => {
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
@@ -22,7 +22,7 @@ const LoginForm = () => {
 
     try {
       // Obtener usuarios desde tu backend real
-      const respuesta = await fetch("http://localhost:3000/api/usuarios");
+      const respuesta = await fetch(`${API_URL}/api/usuarios`);
 
       if (!respuesta.ok) {
         alert("Error al conectar con el servidor.");
