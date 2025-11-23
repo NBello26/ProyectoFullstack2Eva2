@@ -155,6 +155,7 @@ const CheckoutOrganismo = () => {
   });
 };
 
+
   return (
     <div className="checkout-container">
       <h1>Resumen de Compra</h1>
