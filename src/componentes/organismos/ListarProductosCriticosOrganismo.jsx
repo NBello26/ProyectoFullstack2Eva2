@@ -67,7 +67,7 @@ const ListarProductosCriticosOrganismo = () => {
           </tbody>
         </table>
       )}
-
+        <br />
         <Link to="/listproductos" className="btn-back">
           Volver
         </Link>
