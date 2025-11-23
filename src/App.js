@@ -27,6 +27,7 @@ import DetalleBoletaAdminPage from './componentes/paginas/DetalleBoletaAdminPage
 import PerfilAdminPage from './componentes/paginas/PerfilAdminPage.jsx';
 import ListarProductosCriticosPage from './componentes/paginas/ListarProductosCriticosPage.jsx';
 import ReportesPage from './componentes/paginas/ReportesPage.jsx';
+import PerfilUsuario from "./componentes/paginas/PerfilUsuario";
 // 🧩 Importamos los inicializadores de “BD simulada”
 import { inicializarProductos } from './data/products';
 import { inicializarUsuarios } from './data/users';
@@ -67,6 +68,7 @@ function App() {
         <Route path="/perfilAdmin" element={<PerfilAdminPage />} />
         <Route path="/listproductoscriticos" element={<ListarProductosCriticosPage />} />
         <Route path="/reportes" element={<ReportesPage />} />
+        <Route path="/perfilUsuario" element={<PerfilUsuario />} />
       </Routes>
     </Router>
   );
