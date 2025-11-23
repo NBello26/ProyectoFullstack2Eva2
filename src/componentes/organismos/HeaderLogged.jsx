@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../estilos/headerLogged.css";
 import "../../estilos/header.css";
 import { ContadorCarrito } from "../atomos/ContadorCarrito";
+import { Link } from "react-router-dom";
 const API_URL = process.env.REACT_APP_API_URL;
 const HeaderLogged = () => {
   const navigate = useNavigate();
@@ -44,21 +45,21 @@ const HeaderLogged = () => {
           <div className="site-name-logged">TIENDA DuocUC</div>
           <nav>
             <ul className="nav-list-logged">
-              <li><a href="/paginaPrincipal">Home</a></li>
-              <li><a href="/tienda">Productos</a></li>
-              <li><a href="/ofertas">Ofertas</a></li>
-              <li><a href="/categoria">Categoría</a></li>
-              <li><a href="/nosotros">Nosotros</a></li>
-              <li><a href="/blogs">Blogs</a></li>
-              <li><a href="/contacto">Contacto</a></li>
+              <li><Link to="/paginaPrincipal">Home</Link></li>
+              <li><Link to="/tienda">Productos</Link></li>
+              <li><Link to="/ofertas">Ofertas</Link></li>
+              <li><Link to="/categoria">Categoría</Link></li>
+              <li><Link to="/nosotros">Nosotros</Link></li>
+              <li><Link to="/blogs">Blogs</Link></li>
+              <li><Link to="/contacto">Contacto</Link></li>
             </ul>
           </nav>
         </div>
         <div className="header-logged-right">
-          <a href="/carrito" className="cart-logged">
+          <Link to="/carrito" className="cart-logged">
             <span className="cart-emoji">🛒</span>
             <span className="cart-count">(<ContadorCarrito />)</span>
-          </a>
+          </Link>
           <button className="logout-btn-logged" onClick={handleLogout}>
             Logout
           </button>

@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SelectRegionComunaCheckout from "../moleculas/SelectRegionComuna";
 import "../../estilos/checkoutPage.css";
+
 const API_URL = process.env.REACT_APP_API_URL;
+
 const CheckoutOrganismo = () => {
   const [carrito, setCarrito] = useState([]);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
@@ -14,6 +16,7 @@ const CheckoutOrganismo = () => {
   const [nombre, setNombre] = useState("");
   const [correo, setCorreo] = useState("");
   const [telefono, setTelefono] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,14 +39,32 @@ const CheckoutOrganismo = () => {
     0
   );
 
+  // 🟦 VALIDACIÓN DE CAMPOS
+  const validarCampos = () => {
+    if (!nombre.trim()) return "El nombre es obligatorio.";
+    if (!correo.trim()) return "El correo es obligatorio.";
+    if (!telefono.trim()) return "El teléfono es obligatorio.";
+    if (!calle.trim()) return "La calle es obligatoria.";
+    if (!region.trim()) return "Debes seleccionar una región.";
+    if (!comuna.trim()) return "Debes seleccionar una comuna.";
+
+    return null;
+  };
+
+  // 🟩 PAGAR AHORA
   const pagarAhora = async () => {
     if (carrito.length === 0) {
       alert("Tu carrito está vacío.");
       return;
     }
 
+    const error = validarCampos();
+    if (error) {
+      alert(error);
+      return;
+    }
+
     try {
-      //  Crear venta en backend
       const ventaBody = {
         id_cliente: usuarioActivo.id,
         total,
@@ -66,7 +87,7 @@ const CheckoutOrganismo = () => {
       const ventaCreada = await ventaRes.json();
       const idVenta = ventaCreada.id_venta;
 
-      //  Crear detalle_venta por cada producto
+      // Crear detalle venta
       for (const item of carrito) {
         const detalleBody = {
           id_venta: idVenta,
@@ -82,7 +103,7 @@ const CheckoutOrganismo = () => {
         });
       }
 
-      //  Vaciar carrito local
+      // Vaciar carrito local
       const usuarioActualizado = { ...usuarioActivo, carrito: [] };
       localStorage.setItem("usuarioActivo", JSON.stringify(usuarioActualizado));
 
@@ -94,7 +115,6 @@ const CheckoutOrganismo = () => {
       setCarrito([]);
       window.dispatchEvent(new Event("storage"));
 
-      //  Redirigir a boleta exitosa
       navigate(`/boleta-exitosa/${idVenta}`, {
         state: {
           idVenta,
@@ -109,7 +129,14 @@ const CheckoutOrganismo = () => {
     }
   };
 
+  // 🟥 COMPRA FALLIDA
   const compraFallida = () => {
+    const error = validarCampos();
+    if (error) {
+      alert(error);
+      return;
+    }
+
     navigate("/boleta-fallida");
   };
 
@@ -117,7 +144,7 @@ const CheckoutOrganismo = () => {
     <div className="checkout-container">
       <h1>Resumen de Compra</h1>
 
-      {/* 🛒 Carrito */}
+      {/* Carrito */}
       <div className="checkout-carrito">
         <h2>Productos</h2>
 
