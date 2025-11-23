@@ -27,7 +27,7 @@ import DetalleBoletaAdminPage from './componentes/paginas/DetalleBoletaAdminPage
 import PerfilAdminPage from './componentes/paginas/PerfilAdminPage.jsx';
 import ListarProductosCriticosPage from './componentes/paginas/ListarProductosCriticosPage.jsx';
 import ReportesPage from './componentes/paginas/ReportesPage.jsx';
-import PerfilUsuario from "./componentes/paginas/PerfilUsuario";
+import PerfilUsuario from "./componentes/paginas/PerfilUsuarioPage.jsx";
 // 🧩 Importamos los inicializadores de “BD simulada”
 import { inicializarProductos } from './data/products';
 import { inicializarUsuarios } from './data/users';
