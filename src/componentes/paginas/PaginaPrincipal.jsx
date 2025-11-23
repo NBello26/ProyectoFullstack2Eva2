@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from "react";
 import MainTemplate from "../plantillas/MainTemplate";
 import ProductosDestacados from "../organismos/ProductosDestacados";
+import { Link } from "react-router-dom";
 import "../../estilos/pagPrincipal.css";
 
 const PagPrincipal = () => {
@@ -33,9 +34,9 @@ const PagPrincipal = () => {
                         y lleva tu experiencia estudiantil al siguiente nivel, acortando tiempos de espera
                         y solo retirando tu producto.
                     </p>
-                    <a href="/tienda" className="btn">
+                    <Link to="/tienda" className="btn">
                         Ver Productos
-                    </a>
+                    </Link>
                 </div>
             </section>
 
