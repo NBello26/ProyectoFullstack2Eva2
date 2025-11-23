@@ -68,11 +68,9 @@ const ListarProductosCriticosOrganismo = () => {
         </table>
       )}
 
-      <button>
         <Link to="/listproductos" className="btn-back">
           Volver
         </Link>
-      </button>
     </div>
   );
 };
