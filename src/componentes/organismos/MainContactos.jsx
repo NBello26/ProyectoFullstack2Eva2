@@ -26,7 +26,7 @@ const MainContactos = () => {
   return (
     <main>
       <div className="acciones">
-        <a href="/admin" className="btn-back">Volver al Panel</a>
+        <Link to="/admin" className="btn-back">Volver al Panel</Link>
       </div>
 
       {loading ? (

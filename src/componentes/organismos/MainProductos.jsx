@@ -25,15 +25,15 @@ const MainProductos = () => {
   return (
     <main className="mainProductosOrganismo-container">
       <div className="mainProductosOrganismo-acciones">
-        <a href="/registroProducto" className="mainProductosOrganismo-btnNuevo">
+        <Link to="/registroProducto" className="mainProductosOrganismo-btnNuevo">
           + Nuevo producto
-        </a>
-        <a href="/listproductoscriticos" className="mainProductosOrganismo-btnCriticos">
+        </Link>
+        <Link to="/listproductoscriticos" className="mainProductosOrganismo-btnCriticos">
           Productos Críticos
-        </a>
-        <a href="/admin" className="mainProductosOrganismo-btnVolver">
+        </Link>
+        <Link to="/admin" className="btn-back">
           Volver al Panel
-        </a>
+        </Link>
       </div>
 
       <TablaProductos productos={productos} />
