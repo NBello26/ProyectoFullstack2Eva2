@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // 🔹 Importar useNavigate
 import "../../estilos/listarProductosCriticosPage.css";
+import { Link } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const ListarProductosCriticosOrganismo = () => {
   const [productosCriticos, setProductosCriticos] = useState([]);
-  const navigate = useNavigate(); // 🔹 Inicializar navigate
+
 
   useEffect(() => {
     const cargarProductos = async () => {
@@ -68,11 +68,10 @@ const ListarProductosCriticosOrganismo = () => {
         </table>
       )}
 
-      <button
-        className="listarCriticosOrganismo-btnVolver"
-        onClick={() => navigate("/listproductos")} // ✅ Ahora sí funciona
-      >
-        Volver
+      <button>
+        <Link to="/listproductos" className="listarCriticosOrganismo-btnVolver">
+          Volver
+        </Link>
       </button>
     </div>
   );
