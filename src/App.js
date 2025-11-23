@@ -61,7 +61,7 @@ function App() {
         <Route path="/categoria" element={<PagCategoria />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/boleta-exitosa/:id" element={<BoletaExitosaPage />} />
-        <Route path="/boleta-fallida/:id" element={<BoletaFallidaPage />} />
+        <Route path="/boleta-fallida" element={<BoletaFallidaPage />} />
         <Route path="/historialUsuario/:id" element={<HistorialUsuarioPage />} />
         <Route path="/listboletas" element={<BoletasAdminPage />} />
         <Route path="/detalleBoleta/:id" element={<DetalleBoletaAdminPage />} />
