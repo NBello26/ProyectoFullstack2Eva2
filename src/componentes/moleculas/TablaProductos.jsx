@@ -7,7 +7,6 @@ const API_URL = process.env.REACT_APP_API_URL;
 const TablaProductos = ({ productos, onEliminar }) => {
   const navigate = useNavigate();
 
-  // Función para eliminar producto
   const eliminarProducto = async (id, nombre) => {
     const confirmar = window.confirm(
       `¿Seguro que quieres eliminar el producto "${nombre}"?`
@@ -26,7 +25,7 @@ const TablaProductos = ({ productos, onEliminar }) => {
 
       alert(`✔ Producto "${nombre}" eliminado correctamente`);
 
-      // Actualiza la tabla sin recargar la página
+      // 🔥 informar al padre para actualizar la tabla
       if (onEliminar) onEliminar(id);
 
     } catch (error) {
@@ -60,21 +59,22 @@ const TablaProductos = ({ productos, onEliminar }) => {
             <td>{producto.categoria}</td>
 
             <td style={{ display: "flex", gap: "10px" }}>
-              {/* Botón Editar */}
+
+              {/* Botón Editar, mantiene el componente Boton */}
               <Boton
                 texto="Editar"
                 className="btn-editar"
                 onClick={() => navigate(`/editarProducto?id=${producto.id}`)}
               />
 
-              {/* Botón Eliminar */}
-              <Boton
-                texto="Eliminar"
+              {/* Botón Eliminar NATIVO — confirmación garantizada */}
+              <button
                 className="btn-eliminar"
-                onClick={() =>
-                  eliminarProducto(producto.id, producto.nombre)
-                }
-              />
+                onClick={() => eliminarProducto(producto.id, producto.nombre)}
+              >
+                Eliminar
+              </button>
+
             </td>
           </tr>
         ))}
