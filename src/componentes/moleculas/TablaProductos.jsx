@@ -25,7 +25,7 @@ const TablaProductos = ({ productos, onEliminar }) => {
 
       alert(`✔ Producto "${nombre}" eliminado correctamente`);
 
-      // 🔥 informar al padre para actualizar la tabla
+      // 🔹 Actualizar el state en el padre
       if (onEliminar) onEliminar(id);
 
     } catch (error) {
@@ -59,22 +59,19 @@ const TablaProductos = ({ productos, onEliminar }) => {
             <td>{producto.categoria}</td>
 
             <td style={{ display: "flex", gap: "10px" }}>
-
-              {/* Botón Editar, mantiene el componente Boton */}
               <Boton
                 texto="Editar"
                 className="btn-editar"
                 onClick={() => navigate(`/editarProducto?id=${producto.id}`)}
               />
 
-              {/* Botón Eliminar NATIVO — confirmación garantizada */}
+              {/* Botón Eliminar nativo */}
               <button
                 className="btn-eliminar"
                 onClick={() => eliminarProducto(producto.id, producto.nombre)}
               >
                 Eliminar
               </button>
-
             </td>
           </tr>
         ))}
