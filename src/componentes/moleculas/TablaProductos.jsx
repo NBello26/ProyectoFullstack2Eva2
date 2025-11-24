@@ -2,8 +2,38 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import Boton from "../atomos/Boton.jsx";
 
-const TablaProductos = ({ productos }) => {
+const API_URL = process.env.REACT_APP_API_URL;
+
+const TablaProductos = ({ productos, onEliminar }) => {
   const navigate = useNavigate();
+
+  // Función para eliminar producto
+  const eliminarProducto = async (id, nombre) => {
+    const confirmar = window.confirm(
+      `¿Seguro que quieres eliminar el producto "${nombre}"?`
+    );
+    if (!confirmar) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/productos/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        alert("❌ Error al eliminar el producto");
+        return;
+      }
+
+      alert(`✔ Producto "${nombre}" eliminado correctamente`);
+
+      // Actualiza la tabla sin recargar la página
+      if (onEliminar) onEliminar(id);
+
+    } catch (error) {
+      console.error("Error eliminando producto:", error);
+      alert("Error de conexión con el servidor");
+    }
+  };
 
   return (
     <table>
@@ -28,11 +58,22 @@ const TablaProductos = ({ productos }) => {
             <td>{producto.descripcion}</td>
             <td>{producto.cantidad}</td>
             <td>{producto.categoria}</td>
-            <td>
+
+            <td style={{ display: "flex", gap: "10px" }}>
+              {/* Botón Editar */}
               <Boton
                 texto="Editar"
                 className="btn-editar"
                 onClick={() => navigate(`/editarProducto?id=${producto.id}`)}
+              />
+
+              {/* Botón Eliminar */}
+              <Boton
+                texto="Eliminar"
+                className="btn-eliminar"
+                onClick={() =>
+                  eliminarProducto(producto.id, producto.nombre)
+                }
               />
             </td>
           </tr>
